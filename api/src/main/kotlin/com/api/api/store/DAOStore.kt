@@ -1,4 +1,6 @@
-package com.api.api
+package com.api.api.store
+
+import com.api.api.DB
 
 object DAOStore {
     fun insert(store: Store) {

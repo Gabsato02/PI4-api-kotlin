@@ -1,4 +1,4 @@
-package com.api.api
+package com.api.api.store
 
 data class Store(
     var id: Int? = null,
