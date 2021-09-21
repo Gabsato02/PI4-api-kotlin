@@ -75,4 +75,27 @@ object DAOItem {
             preparedStatement.execute()
         }
     }
+
+    fun update(id: Int, item: Item) {
+        val currentData = list(id)
+        val name = if (item.name.isNullOrBlank()) currentData.name else item.name
+        val price = if (item.price == 0) currentData.price else item.price
+        val description = if (item.description.isNullOrBlank()) currentData.description else item.description
+        val volume = if (item.volume.isNullOrBlank()) currentData.volume else item.volume
+        val categoryId = if (item.category_id == 0) currentData.category_id else item.category_id
+
+        val sql = "UPDATE item SET name = ?, price = ?, description = ?, volume = ?, category_id = ? WHERE id = $id"
+
+        DB.connection.use {
+            val preparedStatement = it.prepareStatement(sql)
+
+            preparedStatement.setString(1, name)
+            preparedStatement.setInt(2, price)
+            preparedStatement.setString(3, description)
+            preparedStatement.setString(4, volume)
+            preparedStatement.setInt(5, categoryId)
+
+            preparedStatement.execute()
+        }
+    }
 }
