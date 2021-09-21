@@ -1,4 +1,4 @@
-package com.api.api
+package com.api.api.store
 
 import javax.ws.rs.*
 import javax.ws.rs.core.MediaType
