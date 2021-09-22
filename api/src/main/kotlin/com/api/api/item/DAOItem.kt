@@ -6,8 +6,10 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 object DAOItem {
-    fun listAll(): List<Item> {
-        val sql = "SELECT * FROM item"
+    fun listAll(querySearch: String?): List<Item> {
+        val search = if (querySearch.isNullOrBlank()) "" else "WHERE name LIKE '%$querySearch%'"
+        val sql = "SELECT * FROM item $search"
+
         val itemList = arrayListOf<Item>()
 
         DB.connection.use {

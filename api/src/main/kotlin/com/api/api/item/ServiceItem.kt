@@ -10,9 +10,9 @@ class ServiceItem {
     @Path("/list")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    fun listAll(): List<Item> {
+    fun listAll(@QueryParam("search") querySearch: String? ): List<Item> {
         return try {
-            DAOItem.listAll()
+            DAOItem.listAll(querySearch)
         } catch (error: Exception) {
             println(error)
             return emptyList()
