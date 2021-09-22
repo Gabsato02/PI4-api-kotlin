@@ -1,13 +1,13 @@
 package com.api.api.item
 
 import com.api.api.DB
+import com.api.api.formatDateToTimestamp
 import java.text.SimpleDateFormat
 import java.util.*
 
 object DAOItem {
-    // TODO adicionar a recuperação de datas com as queries de listagem + função de update
     fun listAll(): List<Item> {
-        val sql = "SELECT * FROM item WHERE deleted_at IS NULL"
+        val sql = "SELECT * FROM item"
         val itemList = arrayListOf<Item>()
 
         DB.connection.use {
@@ -23,6 +23,9 @@ object DAOItem {
                 item.volume = result.getString("volume")
                 // NOTA: substituir pelo nome da categoria
                 item.category_id = result.getInt("category_id")
+                item.created_at = result.getString("created_at")
+                item.updated_at = result.getString("updated_at")
+                item.deleted_at = result.getString("deleted_at")
                 itemList.add(item)
             }
         }
@@ -44,6 +47,9 @@ object DAOItem {
                 item.description = result.getString("description")
                 item.volume = result.getString("volume")
                 item.category_id = result.getInt("category_id")
+                item.created_at = result.getString("created_at")
+                item.updated_at = result.getString("updated_at")
+                item.deleted_at = result.getString("deleted_at")
             }
         }
         return item
@@ -65,8 +71,7 @@ object DAOItem {
     }
 
     fun delete(id: Int) {
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-        val date = dateFormat.format(Date())
+        val date = formatDateToTimestamp(Date())
 
         val sql = "UPDATE item SET deleted_at = '$date' WHERE id = $id"
 
