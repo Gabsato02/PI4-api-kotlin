@@ -9,4 +9,7 @@ data class Item(
         var description: String? = null,
         var volume: String? = null,
         var category_id: Int = 0,
+        var created_at: String? = null,
+        var updated_at: String? = null,
+        var deleted_at: String? = null,
 )
