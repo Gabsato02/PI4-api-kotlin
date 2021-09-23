@@ -9,9 +9,9 @@ class ServiceStore {
     @Path("/list")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    fun listAll(): List<Store> {
+    fun listAll(@QueryParam("search") querySearch: String? ): List<Store> {
         return try {
-            DAOStore.listAll()
+            DAOStore.listAll(querySearch)
         } catch (error: Exception) {
             return emptyList()
         }
