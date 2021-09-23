@@ -5,5 +5,5 @@ import javax.ws.rs.core.Application
 
 
 @ApplicationPath("/")
-class StoreApplication : Application() {
+class ApiApplication : Application() {
 }

@@ -66,4 +66,6 @@ class ServiceStore {
             "Não foi possível atualizar o item. Tente novamente.\n${error.message}"
         }
     }
+
+//    @Path("/{storeId}/addItem")
 }

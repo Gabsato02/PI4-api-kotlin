@@ -5,18 +5,6 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 object DAOStore {
-    fun insert(store: Store) {
-        val sql = "INSERT INTO store (name, description, owner_id) VALUES (?, ?, ?)"
-        DB.connection.use {
-            val preparedStatement = it.prepareStatement(sql)
-
-            preparedStatement.setString(1, store.name)
-            preparedStatement.setString(2, store.description)
-            preparedStatement.setInt(3, 1)
-            preparedStatement.execute()
-        }
-    }
-
     fun listAll(): List<Store> {
         val sql = "SELECT * FROM store"
         val storeList = arrayListOf<Store>()
@@ -53,6 +41,18 @@ object DAOStore {
             }
         }
         return store
+    }
+
+    fun insert(store: Store) {
+        val sql = "INSERT INTO store (name, description, owner_id) VALUES (?, ?, ?)"
+        DB.connection.use {
+            val preparedStatement = it.prepareStatement(sql)
+
+            preparedStatement.setString(1, store.name)
+            preparedStatement.setString(2, store.description)
+            preparedStatement.setInt(3, 1)
+            preparedStatement.execute()
+        }
     }
 
     fun delete(id: Int) {
