@@ -6,7 +6,11 @@ import java.util.*
 
 object DAOStore {
     fun listAll(querySearch: String?): List<Store> {
-        val search = if (querySearch.isNullOrBlank()) "" else "WHERE name LIKE '%$querySearch%'"
+        val search = if (querySearch.isNullOrBlank()) {
+            "WHERE deleted_at IS NULL"
+        } else {
+            "WHERE name LIKE '%$querySearch%' AND deleted_at IS NULL"
+        }
         val sql = "SELECT * FROM store $search"
 
         val storeList = arrayListOf<Store>()
@@ -31,7 +35,57 @@ object DAOStore {
     }
 
     fun list(id: Int): Store {
-        val sql = "SELECT * FROM store WHERE id = $id"
+        val sql = "SELECT * FROM store WHERE id = $id AND deleted_at IS NULL"
+        val store = Store()
+
+        DB.connection.use {
+            val preparedStatement = it.prepareStatement(sql)
+            val resultSet = preparedStatement.executeQuery()
+
+            if(resultSet.next()){
+                store.id = resultSet.getInt("id")
+                store.name = resultSet.getString("name")
+                store.description = resultSet.getString("description")
+                store.owner_id = resultSet.getInt("owner_id")
+                store.created_at = resultSet.getString("created_at")
+                store.updated_at = resultSet.getString("updated_at")
+                store.deleted_at = resultSet.getString("deleted_at")
+            }
+        }
+        return store
+    }
+
+    fun listAllDeleted(querySearch: String?): List<Store> {
+        val search = if (querySearch.isNullOrBlank()) {
+            "WHERE deleted_at IS NOT NULL"
+        } else {
+            "WHERE name LIKE '%$querySearch%' AND deleted_at IS NOT NULL"
+        }
+        val sql = "SELECT * FROM store $search"
+
+        val storeList = arrayListOf<Store>()
+
+        DB.connection.use {
+            val preparedStatement = it.prepareStatement(sql)
+            val resultSet = preparedStatement.executeQuery()
+
+            while(resultSet.next()) {
+                val store = Store()
+                store.id = resultSet.getInt("id")
+                store.name = resultSet.getString("name")
+                store.description = resultSet.getString("description")
+                store.owner_id = resultSet.getInt("owner_id")
+                store.created_at = resultSet.getString("created_at")
+                store.updated_at = resultSet.getString("updated_at")
+                store.deleted_at = resultSet.getString("deleted_at")
+                storeList.add(store)
+            }
+        }
+        return storeList
+    }
+
+    fun listDeleted(id: Int): Store {
+        val sql = "SELECT * FROM store WHERE id = $id AND deleted_at IS NOT NULL"
         val store = Store()
 
         DB.connection.use {
