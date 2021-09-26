@@ -1,17 +1,17 @@
-package com.api.api.store
+package com.api.api.trait
 
 import javax.ws.rs.*
 import javax.ws.rs.core.MediaType
 
-@Path("/store")
-class ServiceStore {
+@Path("/trait")
+class ServiceTrait {
 
     @Path("/list")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    fun listAll(@QueryParam("search") querySearch: String? ): List<Store> {
+    fun listAll(@QueryParam("search") querySearch: String? ): List<Trait> {
         return try {
-            DAOStore.listAll(querySearch)
+            DAOTrait.listAll(querySearch)
         } catch (error: Exception) {
             return emptyList()
         }
@@ -20,20 +20,20 @@ class ServiceStore {
     @Path("/list/{id}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    fun list(@PathParam("id") queryId: Int): Store {
+    fun list(@PathParam("id") queryId: Int): Trait {
         return try {
-            DAOStore.list(queryId)
+            DAOTrait.list(queryId)
         } catch (error: Exception) {
-            return Store()
+            return Trait()
         }
     }
 
     @Path("/list/deleted")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    fun listAllDeleted(@QueryParam("search") querySearch: String? ): List<Store> {
+    fun listAllDeleted(@QueryParam("search") querySearch: String? ): List<Trait> {
         return try {
-            DAOStore.listAllDeleted(querySearch)
+            DAOTrait.listAllDeleted(querySearch)
         } catch (error: Exception) {
             return emptyList()
         }
@@ -42,11 +42,11 @@ class ServiceStore {
     @Path("/list/deleted/{id}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    fun listDeleted(@PathParam("id") queryId: Int): Store {
+    fun listDeleted(@PathParam("id") queryId: Int): Trait {
         return try {
-            DAOStore.listDeleted(queryId)
+            DAOTrait.listDeleted(queryId)
         } catch (error: Exception) {
-            return Store()
+            return Trait()
         }
     }
 
@@ -54,12 +54,12 @@ class ServiceStore {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.TEXT_PLAIN)
-    fun insert(store: Store?): String {
+    fun insert(trait: Trait?): String {
         return try {
-            store?.let { DAOStore.insert(it) }
+            trait?.let { DAOTrait.insert(it) }
             "Registro inserido com sucesso."
         } catch (error: Exception) {
-            "Não foi possível apagar a loja. Tente novamente.\n${error.message}"
+            "Não foi possível apagar o traço. Tente novamente.\n${error.message}"
         }
     }
 
@@ -69,10 +69,10 @@ class ServiceStore {
     @Produces(MediaType.TEXT_PLAIN)
     fun delete(@PathParam("id") queryId: Int): String {
         return try {
-            DAOStore.delete(queryId)
+            DAOTrait.delete(queryId)
             "Registro apagado com sucesso."
         } catch (error: Exception) {
-            "Não foi possível apagar a loja. Tente novamente.\n${error.message}"
+            "Não foi possível apagar o traço. Tente novamente.\n${error.message}"
         }
     }
 
@@ -80,14 +80,25 @@ class ServiceStore {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.TEXT_PLAIN)
-    fun update(@PathParam("id") queryId: Int, store: Store): String {
+    fun update(@PathParam("id") queryId: Int, trait: Trait): String {
         return try {
-            DAOStore.update(queryId, store)
+            DAOTrait.update(queryId, trait)
             "Registro atualizado com sucesso."
         } catch (error: Exception) {
-            "Não foi possível atualizar a loja. Tente novamente.\n${error.message}"
+            "Não foi possível atualizar o traço. Tente novamente.\n${error.message}"
         }
     }
 
-//    @Path("/{storeId}/addItem")
+    @Path("/restore/{id}")
+    @PUT
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.TEXT_PLAIN)
+    fun restore(@PathParam("id") queryId: Int): String {
+        return try {
+            DAOTrait.restore(queryId)
+            "Registro restaurado com sucesso."
+        } catch (error: Exception) {
+            "Não foi possível restaurar o traço. Tente novamente.\n${error.message}"
+        }
+    }
 }
