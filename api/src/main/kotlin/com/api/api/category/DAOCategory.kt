@@ -10,7 +10,7 @@ import java.util.*
 object DAOCategory {
     fun listAll(querySearch: String?, queryItems: Boolean): List<Category> {
         val search = if (querySearch.isNullOrBlank()) "" else "WHERE name LIKE '%$querySearch%'"
-        val sql = "SELECT id, name, created_at, deleted_at, updated_at FROM category $search"
+        val sql = "SELECT c.id, c.name, c.created_at, c.deleted_at, c.updated_at FROM category AS c $search"
 
         val categoryList = arrayListOf<Category>()
 
@@ -71,14 +71,14 @@ object DAOCategory {
         }
     }
 
-    private fun returnCategoryData(result: ResultSet, shouldBringItems: Boolean): Category {
+    fun returnCategoryData(result: ResultSet, shouldBringItems: Boolean): Category {
         val category = Category()
 
-        category.id = result.getInt("id")
-        category.name = result.getString("name")
-        category.created_at = result.getString("created_at")
-        category.updated_at = result.getString("updated_at")
-        category.deleted_at = result.getString("deleted_at")
+        category.id = result.getInt("c.id")
+        category.name = result.getString("c.name")
+        category.created_at = result.getString("c.created_at")
+        category.updated_at = result.getString("c.updated_at")
+        category.deleted_at = result.getString("c.deleted_at")
         category.items = if(shouldBringItems) DAOItem.listItemsByCategory(category.id) else null
         return category
     }
