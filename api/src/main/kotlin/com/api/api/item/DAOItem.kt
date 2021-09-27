@@ -1,10 +1,13 @@
 package com.api.api.item
 
 import com.api.api.DB
-import com.api.api.category.Category
+import com.api.api.category.DAOCategory
+import com.api.api.characteristics.Characteristic
+import com.api.api.characteristics.DAOCharacteristics
 import com.api.api.formatDateToTimestamp
+import com.api.api.trait.DAOTrait
+import com.api.api.trait.Trait
 import java.sql.ResultSet
-import java.text.SimpleDateFormat
 import java.util.*
 
 object DAOItem {
@@ -52,6 +55,40 @@ object DAOItem {
             }
         }
         return itemsByCategoryList
+    }
+
+    private fun listItemCharacteristics(id: Int): List<Characteristic> {
+        val sql = "SELECT * FROM item_characteristics AS ic INNER JOIN characteristics AS c ON " +
+                "ic.characteristics_id = c.id WHERE ic.item_id = $id AND ic.deleted_at IS NULL AND c.deleted_at IS NULL GROUP BY c.id"
+        val characteristicsList = arrayListOf<Characteristic>()
+
+        DB.connection.use {
+            val preparedStatement = it.prepareStatement(sql)
+            val result = preparedStatement.executeQuery()
+
+            while(result.next()) {
+                var characteristic = DAOCharacteristics.list(result.getInt("characteristics_id"))
+                characteristicsList.add(characteristic)
+            }
+        }
+        return characteristicsList
+    }
+
+    private fun listItemTraits(id: Int): List<Trait> {
+        val sql = "SELECT * FROM item_trait AS it INNER JOIN trait AS t ON " +
+                "it.trait_id = t.id WHERE it.item_id = $id AND it.deleted_at IS NULL AND t.deleted_at IS NULL GROUP BY t.id"
+        val traitsList = arrayListOf<Trait>()
+
+        DB.connection.use {
+            val preparedStatement = it.prepareStatement(sql)
+            val result = preparedStatement.executeQuery()
+
+            while(result.next()) {
+                var trait = DAOTrait.list(result.getInt("trait_id"))
+                traitsList.add(trait)
+            }
+        }
+        return traitsList
     }
 
     fun insert(item: Item) {
@@ -143,21 +180,15 @@ object DAOItem {
 
     private fun returnItemData(result: ResultSet, showCategory: Boolean = true): Item {
         val item = Item()
-        val category = Category()
 
         item.id = result.getInt("id")
         item.name = result.getString("name")
         item.price = result.getInt("price")
         item.description = result.getString("description")
         item.volume = result.getString("volume")
-        if (showCategory) {
-            category.id = result.getInt("c.id")
-            category.name = result.getString("c.name")
-            category.created_at = result.getString("c.created_at")
-            category.updated_at = result.getString("c.updated_at")
-            category.deleted_at = result.getString("c.deleted_at")
-        }
-        item.category = if (showCategory) category else null
+        item.category = if (showCategory) DAOCategory.returnCategoryData(result, false) else null
+        item.characteristics = listItemCharacteristics(item.id)
+        item.traits = listItemTraits(item.id)
         item.category_id = result.getInt("category_id")
         item.created_at = result.getString("created_at")
         item.updated_at = result.getString("updated_at")

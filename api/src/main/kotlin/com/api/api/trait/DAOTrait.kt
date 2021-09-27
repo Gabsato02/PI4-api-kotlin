@@ -1,6 +1,7 @@
 package com.api.api.trait
 
 import com.api.api.DB
+import java.sql.ResultSet
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -20,13 +21,7 @@ object DAOTrait {
             val resultSet = preparedStatement.executeQuery()
 
             while(resultSet.next()) {
-                val trait = Trait()
-                trait.id = resultSet.getInt("id")
-                trait.name = resultSet.getString("name")
-                trait.description = resultSet.getString("description")
-                trait.created_at = resultSet.getString("created_at")
-                trait.updated_at = resultSet.getString("updated_at")
-                trait.deleted_at = resultSet.getString("deleted_at")
+                val trait = returnTraitData(resultSet)
                 traitList.add(trait)
             }
         }
@@ -35,19 +30,14 @@ object DAOTrait {
 
     fun list(id: Int): Trait {
         val sql = "SELECT * FROM trait WHERE id = $id AND deleted_at IS NULL"
-        val trait = Trait()
+        var trait = Trait()
 
         DB.connection.use {
             val preparedStatement = it.prepareStatement(sql)
             val resultSet = preparedStatement.executeQuery()
 
             if(resultSet.next()){
-                trait.id = resultSet.getInt("id")
-                trait.name = resultSet.getString("name")
-                trait.description = resultSet.getString("description")
-                trait.created_at = resultSet.getString("created_at")
-                trait.updated_at = resultSet.getString("updated_at")
-                trait.deleted_at = resultSet.getString("deleted_at")
+                trait = returnTraitData(resultSet)
             }
         }
         return trait
@@ -69,13 +59,7 @@ object DAOTrait {
             val resultSet = preparedStatement.executeQuery()
 
             while(resultSet.next()) {
-                val trait = Trait()
-                trait.id = resultSet.getInt("id")
-                trait.name = resultSet.getString("name")
-                trait.description = resultSet.getString("description")
-                trait.created_at = resultSet.getString("created_at")
-                trait.updated_at = resultSet.getString("updated_at")
-                trait.deleted_at = resultSet.getString("deleted_at")
+                val trait = returnTraitData(resultSet)
                 traitList.add(trait)
             }
         }
@@ -84,19 +68,14 @@ object DAOTrait {
 
     fun listDeleted(id: Int): Trait {
         val sql = "SELECT * FROM trait WHERE id = $id AND deleted_at IS NOT NULL"
-        val trait = Trait()
+        var trait = Trait()
 
         DB.connection.use {
             val preparedStatement = it.prepareStatement(sql)
             val resultSet = preparedStatement.executeQuery()
 
             if(resultSet.next()){
-                trait.id = resultSet.getInt("id")
-                trait.name = resultSet.getString("name")
-                trait.description = resultSet.getString("description")
-                trait.created_at = resultSet.getString("created_at")
-                trait.updated_at = resultSet.getString("updated_at")
-                trait.deleted_at = resultSet.getString("deleted_at")
+                trait = returnTraitData(resultSet)
             }
         }
         return trait
@@ -150,5 +129,16 @@ object DAOTrait {
 
             preparedStatement.execute()
         }
+    }
+
+    private fun returnTraitData(resultSet: ResultSet): Trait {
+        val trait = Trait()
+        trait.id = resultSet.getInt("id")
+        trait.name = resultSet.getString("name")
+        trait.description = resultSet.getString("description")
+        trait.created_at = resultSet.getString("created_at")
+        trait.updated_at = resultSet.getString("updated_at")
+        trait.deleted_at = resultSet.getString("deleted_at")
+        return trait
     }
 }

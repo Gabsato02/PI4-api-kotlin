@@ -1,6 +1,7 @@
 package com.api.api.characteristics
 
 import com.api.api.DB
+import java.sql.ResultSet
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -20,14 +21,7 @@ object DAOCharacteristics {
             val resultSet = preparedStatement.executeQuery()
 
             while(resultSet.next()) {
-                val characteristic = Characteristic()
-                characteristic.id = resultSet.getInt("id")
-                characteristic.name = resultSet.getString("name")
-                characteristic.description = resultSet.getString("description")
-                characteristic.characteristics_value = resultSet.getString("characteristics_value")
-                characteristic.created_at = resultSet.getString("created_at")
-                characteristic.updated_at = resultSet.getString("updated_at")
-                characteristic.deleted_at = resultSet.getString("deleted_at")
+                val characteristic = returnCharacteristicData(resultSet)
                 characteristicList.add(characteristic)
             }
         }
@@ -36,20 +30,14 @@ object DAOCharacteristics {
 
     fun list(id: Int): Characteristic {
         val sql = "SELECT * FROM characteristics WHERE id = $id AND deleted_at IS NULL"
-        val characteristic = Characteristic()
+        var characteristic = Characteristic()
 
         DB.connection.use {
             val preparedStatement = it.prepareStatement(sql)
             val resultSet = preparedStatement.executeQuery()
 
             if(resultSet.next()){
-                characteristic.id = resultSet.getInt("id")
-                characteristic.name = resultSet.getString("name")
-                characteristic.description = resultSet.getString("description")
-                characteristic.characteristics_value = resultSet.getString("characteristics_value")
-                characteristic.created_at = resultSet.getString("created_at")
-                characteristic.updated_at = resultSet.getString("updated_at")
-                characteristic.deleted_at = resultSet.getString("deleted_at")
+                characteristic = returnCharacteristicData(resultSet)
             }
         }
         return characteristic
@@ -70,14 +58,7 @@ object DAOCharacteristics {
             val resultSet = preparedStatement.executeQuery()
 
             while(resultSet.next()) {
-                val characteristic = Characteristic()
-                characteristic.id = resultSet.getInt("id")
-                characteristic.name = resultSet.getString("name")
-                characteristic.description = resultSet.getString("description")
-                characteristic.characteristics_value = resultSet.getString("characteristics_value")
-                characteristic.created_at = resultSet.getString("created_at")
-                characteristic.updated_at = resultSet.getString("updated_at")
-                characteristic.deleted_at = resultSet.getString("deleted_at")
+                val characteristic = returnCharacteristicData(resultSet)
                 characteristicList.add(characteristic)
             }
         }
@@ -86,20 +67,14 @@ object DAOCharacteristics {
 
     fun listDeleted(id: Int): Characteristic {
         val sql = "SELECT * FROM characteristics WHERE id = $id AND deleted_at IS NOT NULL"
-        val characteristic = Characteristic()
+        var characteristic = Characteristic()
 
         DB.connection.use {
             val preparedStatement = it.prepareStatement(sql)
             val resultSet = preparedStatement.executeQuery()
 
             if(resultSet.next()){
-                characteristic.id = resultSet.getInt("id")
-                characteristic.name = resultSet.getString("name")
-                characteristic.description = resultSet.getString("description")
-                characteristic.characteristics_value = resultSet.getString("characteristics_value")
-                characteristic.created_at = resultSet.getString("created_at")
-                characteristic.updated_at = resultSet.getString("updated_at")
-                characteristic.deleted_at = resultSet.getString("deleted_at")
+                characteristic = returnCharacteristicData(resultSet)
             }
         }
         return characteristic
@@ -156,5 +131,19 @@ object DAOCharacteristics {
 
             preparedStatement.execute()
         }
+    }
+
+    private fun returnCharacteristicData(resultSet: ResultSet): Characteristic {
+        val characteristic = Characteristic()
+
+        characteristic.id = resultSet.getInt("id")
+        characteristic.name = resultSet.getString("name")
+        characteristic.description = resultSet.getString("description")
+        characteristic.characteristics_value = resultSet.getString("characteristics_value")
+        characteristic.created_at = resultSet.getString("created_at")
+        characteristic.updated_at = resultSet.getString("updated_at")
+        characteristic.deleted_at = resultSet.getString("deleted_at")
+
+        return characteristic
     }
 }
