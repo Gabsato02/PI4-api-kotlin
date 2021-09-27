@@ -103,6 +103,44 @@ object DAOItem {
         }
     }
 
+    fun addTrait(itemId: Int, traitId: Int) {
+        val sql = "INSERT INTO item_trait (item_id, trait_id) VALUES (?, ?)"
+        DB.connection.use {
+            val preparedStatement = it.prepareStatement(sql)
+            preparedStatement.setInt(1, itemId)
+            preparedStatement.setInt(2, traitId)
+            preparedStatement.execute()
+        }
+    }
+
+    fun removeTrait(itemId: Int, traitId: Int) {
+        val date = formatDateToTimestamp(Date())
+        val sql = "UPDATE item_trait SET deleted_at = '$date' WHERE item_id = $itemId AND trait_id = $traitId"
+        DB.connection.use {
+            val preparedStatement = it.prepareStatement(sql)
+            preparedStatement.execute()
+        }
+    }
+
+    fun addCharacteristic(itemId: Int, characteristicId: Int) {
+        val sql = "INSERT INTO item_characteristics (item_id, characteristics_id) VALUES (?, ?)"
+        DB.connection.use {
+            val preparedStatement = it.prepareStatement(sql)
+            preparedStatement.setInt(1, itemId)
+            preparedStatement.setInt(2, characteristicId)
+            preparedStatement.execute()
+        }
+    }
+
+    fun removeCharacteristic(itemId: Int, characteristicId: Int) {
+        val date = formatDateToTimestamp(Date())
+        val sql = "UPDATE item_characteristics SET deleted_at = '$date' WHERE item_id = $itemId AND characteristics_id = $characteristicId"
+        DB.connection.use {
+            val preparedStatement = it.prepareStatement(sql)
+            preparedStatement.execute()
+        }
+    }
+
     private fun returnItemData(result: ResultSet, showCategory: Boolean = true): Item {
         val item = Item()
         val category = Category()

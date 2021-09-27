@@ -69,4 +69,56 @@ class ServiceItem {
             "Não foi possível atualizar o item. Tente novamente.\n${error.message}"
         }
     }
+
+    @Path("/{itemId}/trait/{traitId}")
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces("text/plain")
+    fun addTrait(@PathParam("itemId") itemId: Int, @PathParam("traitId") traitId: Int): String {
+        return try {
+            DAOItem.addTrait(itemId, traitId)
+            "Traço inserido com sucesso."
+        } catch (error: Exception) {
+            "Não foi possível inserir o traço. Tente novamente.\n${error.message}"
+        }
+    }
+
+    @Path("/{itemId}/trait/{traitId}")
+    @DELETE
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces("text/plain")
+    fun removeTrait(@PathParam("itemId") itemId: Int, @PathParam("traitId") traitId: Int): String {
+        return try {
+            DAOItem.removeTrait(itemId, traitId)
+            "Traço removido com sucesso."
+        } catch (error: Exception) {
+            "Não foi possível remover o traço. Tente novamente.\n${error.message}"
+        }
+    }
+
+    @Path("/{itemId}/characteristic/{characteristicId}")
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces("text/plain")
+    fun addCharacteristic(@PathParam("itemId") itemId: Int, @PathParam("characteristicId") characteristicId: Int): String {
+        return try {
+            DAOItem.addCharacteristic(itemId, characteristicId)
+            "Característica inserida com sucesso."
+        } catch (error: Exception) {
+            "Não foi possível inserir o característica. Tente novamente.\n${error.message}"
+        }
+    }
+
+    @Path("/{itemId}/characteristic/{characteristicId}")
+    @DELETE
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces("text/plain")
+    fun removeCharacteristic(@PathParam("itemId") itemId: Int, @PathParam("characteristicId") characteristicId: Int): String {
+        return try {
+            DAOItem.removeCharacteristic(itemId, characteristicId)
+            "Característica removida com sucesso."
+        } catch (error: Exception) {
+            "Não foi possível remover o característica. Tente novamente.\n${error.message}"
+        }
+    }
 }
