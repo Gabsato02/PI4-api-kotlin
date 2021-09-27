@@ -1,14 +1,16 @@
 package com.api.api.item
 
 import com.api.api.DB
+import com.api.api.category.Category
 import com.api.api.formatDateToTimestamp
+import java.sql.ResultSet
 import java.text.SimpleDateFormat
 import java.util.*
 
 object DAOItem {
     fun listAll(querySearch: String?): List<Item> {
-        val search = if (querySearch.isNullOrBlank()) "" else "WHERE name LIKE '%$querySearch%'"
-        val sql = "SELECT * FROM item $search"
+        val search = if (querySearch.isNullOrBlank()) "" else "WHERE i.name LIKE '%$querySearch%'"
+        val sql = "SELECT * FROM item AS i JOIN category AS c ON i.category_id = c.id $search "
 
         val itemList = arrayListOf<Item>()
 
@@ -17,17 +19,7 @@ object DAOItem {
             val result = preparedStatement.executeQuery()
 
             while(result.next()) {
-                var item = Item()
-                item.id = result.getInt("id")
-                item.name = result.getString("name")
-                item.price = result.getInt("price")
-                item.description = result.getString("description")
-                item.volume = result.getString("volume")
-                // NOTA: substituir pelo nome da categoria
-                item.category_id = result.getInt("category_id")
-                item.created_at = result.getString("created_at")
-                item.updated_at = result.getString("updated_at")
-                item.deleted_at = result.getString("deleted_at")
+                var item = returnItemData(result)
                 itemList.add(item)
             }
         }
@@ -35,26 +27,31 @@ object DAOItem {
     }
 
     fun list(id: Int): Item {
-        val sql = "SELECT * FROM item WHERE id = $id"
-        val item = Item()
+        val sql = "SELECT * FROM item AS i JOIN category AS c ON i.category_id = c.id WHERE i.id = $id "
+        var item = Item()
+
+        DB.connection.use {
+            val preparedStatement = it.prepareStatement(sql)
+            val result = preparedStatement.executeQuery()
+            if(result.next()) item = returnItemData(result)
+        }
+        return item
+    }
+
+    fun listItemsByCategory(id: Int): List<Item> {
+        val sql = "SELECT id, name, price, description, volume, category_id, created_at, updated_at, deleted_at FROM item WHERE category_id = $id"
+        val itemsByCategoryList = arrayListOf<Item>()
 
         DB.connection.use {
             val preparedStatement = it.prepareStatement(sql)
             val result = preparedStatement.executeQuery()
 
-            if(result.next()) {
-                item.id = result.getInt("id")
-                item.name = result.getString("name")
-                item.price = result.getInt("price")
-                item.description = result.getString("description")
-                item.volume = result.getString("volume")
-                item.category_id = result.getInt("category_id")
-                item.created_at = result.getString("created_at")
-                item.updated_at = result.getString("updated_at")
-                item.deleted_at = result.getString("deleted_at")
+            while(result.next()) {
+                var item = returnItemData(result, false)
+                itemsByCategoryList.add(item)
             }
         }
-        return item
+        return itemsByCategoryList
     }
 
     fun insert(item: Item) {
@@ -104,5 +101,30 @@ object DAOItem {
 
             preparedStatement.execute()
         }
+    }
+
+    private fun returnItemData(result: ResultSet, showCategory: Boolean = true): Item {
+        val item = Item()
+        val category = Category()
+
+        item.id = result.getInt("id")
+        item.name = result.getString("name")
+        item.price = result.getInt("price")
+        item.description = result.getString("description")
+        item.volume = result.getString("volume")
+        if (showCategory) {
+            category.id = result.getInt("c.id")
+            category.name = result.getString("c.name")
+            category.created_at = result.getString("c.created_at")
+            category.updated_at = result.getString("c.updated_at")
+            category.deleted_at = result.getString("c.deleted_at")
+        }
+        item.category = if (showCategory) category else null
+        item.category_id = result.getInt("category_id")
+        item.created_at = result.getString("created_at")
+        item.updated_at = result.getString("updated_at")
+        item.deleted_at = result.getString("deleted_at")
+
+        return item
     }
 }
