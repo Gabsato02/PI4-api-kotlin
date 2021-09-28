@@ -70,6 +70,19 @@ class ServiceItem {
         }
     }
 
+    @Path("/restore/{id}")
+    @PUT
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.TEXT_PLAIN)
+    fun restore(@PathParam("id") queryId: Int): String {
+        return try {
+            DAOItem.restore(queryId)
+            "Item restaurado com sucesso."
+        } catch (error: Exception) {
+            "Não foi possível restaurar o item. Tente novamente.\n${error.message}"
+        }
+    }
+
     @Path("/{itemId}/trait/{traitId}")
     @POST
     @Consumes(MediaType.APPLICATION_JSON)

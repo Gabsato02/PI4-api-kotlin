@@ -3,7 +3,6 @@ package com.api.api.category
 import com.api.api.DB
 import com.api.api.formatDateToTimestamp
 import com.api.api.item.DAOItem
-import com.api.api.item.Item
 import java.sql.ResultSet
 import java.util.*
 
@@ -67,6 +66,15 @@ object DAOCategory {
         DB.connection.use {
             val preparedStatement = it.prepareStatement(sql)
             preparedStatement.setString(1, name)
+            preparedStatement.execute()
+        }
+    }
+
+    fun restore(id: Int) {
+        val sql = "UPDATE category SET deleted_at = null WHERE id = $id"
+
+        DB.connection.use {
+            val preparedStatement = it.prepareStatement(sql)
             preparedStatement.execute()
         }
     }
