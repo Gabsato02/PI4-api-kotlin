@@ -1,6 +1,7 @@
 package com.api.api.store
 
 import com.api.api.DB
+import java.sql.ResultSet
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -20,18 +21,23 @@ object DAOStore {
             val resultSet = preparedStatement.executeQuery()
 
             while(resultSet.next()) {
-                val store = Store()
-                store.id = resultSet.getInt("id")
-                store.name = resultSet.getString("name")
-                store.description = resultSet.getString("description")
-                store.owner_id = resultSet.getInt("owner_id")
-                store.created_at = resultSet.getString("created_at")
-                store.updated_at = resultSet.getString("updated_at")
-                store.deleted_at = resultSet.getString("deleted_at")
+                val store = returnStoreData(resultSet)
                 storeList.add(store)
             }
         }
         return storeList
+    }
+
+    private fun returnStoreData(resultSet: ResultSet): Store {
+        val store = Store()
+        store.id = resultSet.getInt("id")
+        store.name = resultSet.getString("name")
+        store.description = resultSet.getString("description")
+        store.owner_id = resultSet.getInt("owner_id")
+        store.created_at = resultSet.getString("created_at")
+        store.updated_at = resultSet.getString("updated_at")
+        store.deleted_at = resultSet.getString("deleted_at")
+        return store
     }
 
     fun list(id: Int): Store {

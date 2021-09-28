@@ -69,4 +69,17 @@ class ServiceCategory {
             "Não foi possível atualizar a categoria. Tente novamente.\n${error.message}"
         }
     }
+
+    @Path("/restore/{id}")
+    @PUT
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.TEXT_PLAIN)
+    fun restore(@PathParam("id") queryId: Int): String {
+        return try {
+            DAOCategory.restore(queryId)
+            "Categoria restaurada com sucesso."
+        } catch (error: Exception) {
+            "Não foi possível restaurar a categoria. Tente novamente.\n${error.message}"
+        }
+    }
 }

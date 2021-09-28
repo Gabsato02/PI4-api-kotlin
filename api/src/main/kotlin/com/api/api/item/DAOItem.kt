@@ -140,6 +140,15 @@ object DAOItem {
         }
     }
 
+    fun restore(id: Int) {
+        val sql = "UPDATE item SET deleted_at = null WHERE id = $id"
+
+        DB.connection.use {
+            val preparedStatement = it.prepareStatement(sql)
+            preparedStatement.execute()
+        }
+    }
+
     fun addTrait(itemId: Int, traitId: Int) {
         val sql = "INSERT INTO item_trait (item_id, trait_id) VALUES (?, ?)"
         DB.connection.use {
