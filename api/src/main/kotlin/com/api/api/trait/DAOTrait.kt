@@ -1,7 +1,9 @@
 package com.api.api.trait
 
 import com.api.api.DB
+import java.lang.Exception
 import java.sql.ResultSet
+import java.sql.SQLException
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -83,13 +85,15 @@ object DAOTrait {
 
     fun insert(trait: Trait) {
         val sql = "INSERT INTO trait (name, description) VALUES (?, ?)"
+        var rowsAffected = 0
         DB.connection.use {
             val preparedStatement = it.prepareStatement(sql)
 
             preparedStatement.setString(1, trait.name)
             preparedStatement.setString(2, trait.description)
-            preparedStatement.execute()
+            rowsAffected = preparedStatement.executeUpdate()
         }
+        if (rowsAffected <= 0) throw Exception()
     }
 
     fun delete(id: Int) {
@@ -105,7 +109,7 @@ object DAOTrait {
     }
 
     fun update(id: Int, trait: Trait)  {
-        val currentData = DAOTrait.list(id)
+        val currentData = list(id)
         val name = if (trait.name.isNullOrBlank()) currentData.name else trait.name
         val description = if (trait.description.isNullOrBlank()) currentData.description else trait.description
 

@@ -1,7 +1,9 @@
 package com.api.api.trait
 
+import java.sql.SQLException
 import javax.ws.rs.*
 import javax.ws.rs.core.MediaType
+import javax.ws.rs.core.Response
 
 @Path("/trait")
 class ServiceTrait {
@@ -54,12 +56,18 @@ class ServiceTrait {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.TEXT_PLAIN)
-    fun insert(trait: Trait?): String {
+    fun insert(trait: Trait): Response {
+        val isValid = trait.validate()
+
+        if (!isValid) return Response.status(Response.Status.BAD_REQUEST)
+                                     .entity("Parâmetros incorretos. Tente novamente.")
+                                     .build()
+
         return try {
-            trait?.let { DAOTrait.insert(it) }
-            "Registro inserido com sucesso."
+            trait.let { DAOTrait.insert(it) }
+            Response.status(Response.Status.OK).entity("Registro inserido com sucesso.").build()
         } catch (error: Exception) {
-            "Não foi possível apagar o traço. Tente novamente.\n${error.message}"
+            Response.status(Response.Status.BAD_REQUEST).entity("Não foi possível executar a operação.").build()
         }
     }
 
