@@ -7,10 +7,12 @@ import com.api.api.characteristics.DAOCharacteristics
 import com.api.api.formatDateToTimestamp
 import com.api.api.trait.DAOTrait
 import com.api.api.trait.Trait
+import java.lang.Exception
 import java.sql.ResultSet
 import java.util.*
 
 object DAOItem {
+    var rowsAffected = 0
     fun listAll(querySearch: String?): List<Item> {
         val search = if (querySearch.isNullOrBlank()) "" else "WHERE i.name LIKE '%$querySearch%'"
         val sql = "SELECT * FROM item AS i JOIN category AS c ON i.category_id = c.id $search "
@@ -55,6 +57,23 @@ object DAOItem {
             }
         }
         return itemsByCategoryList
+    }
+
+    fun listItemByStore(id: Int): List<Item> {
+        val sql = "SELECT * FROM item_store AS i_store INNER JOIN item AS i ON " +
+                "i_store.item_id = i.id WHERE i_store.store_id = $id AND i_store.deleted_at IS NULL AND i.deleted_at IS NULL GROUP BY i.id"
+        val itemList = arrayListOf<Item>()
+
+        DB.connection.use {
+            val preparedStatement = it.prepareStatement(sql)
+            val result = preparedStatement.executeQuery()
+
+            while(result.next()) {
+                var item = list(result.getInt("item_id"))
+                itemList.add(item)
+            }
+        }
+        return itemList
     }
 
     private fun listItemCharacteristics(id: Int): List<Characteristic> {
@@ -102,8 +121,9 @@ object DAOItem {
             preparedStatement.setString(4, item.volume)
             preparedStatement.setInt(5, item.category_id)
 
-            preparedStatement.execute()
+            rowsAffected = preparedStatement.executeUpdate()
         }
+        if (rowsAffected <= 0) throw Exception()
     }
 
     fun delete(id: Int) {
@@ -113,8 +133,9 @@ object DAOItem {
 
         DB.connection.use {
             val preparedStatement = it.prepareStatement(sql)
-            preparedStatement.execute()
+            rowsAffected = preparedStatement.executeUpdate()
         }
+        if (rowsAffected <= 0) throw Exception()
     }
 
     fun update(id: Int, item: Item) {
@@ -136,8 +157,9 @@ object DAOItem {
             preparedStatement.setString(4, volume)
             preparedStatement.setInt(5, categoryId)
 
-            preparedStatement.execute()
+            rowsAffected = preparedStatement.executeUpdate()
         }
+        if (rowsAffected <= 0) throw Exception()
     }
 
     fun restore(id: Int) {
@@ -145,8 +167,9 @@ object DAOItem {
 
         DB.connection.use {
             val preparedStatement = it.prepareStatement(sql)
-            preparedStatement.execute()
+            rowsAffected = preparedStatement.executeUpdate()
         }
+        if (rowsAffected <= 0) throw Exception()
     }
 
     fun addTrait(itemId: Int, traitId: Int) {
@@ -155,8 +178,9 @@ object DAOItem {
             val preparedStatement = it.prepareStatement(sql)
             preparedStatement.setInt(1, itemId)
             preparedStatement.setInt(2, traitId)
-            preparedStatement.execute()
+            rowsAffected = preparedStatement.executeUpdate()
         }
+        if (rowsAffected <= 0) throw Exception()
     }
 
     fun removeTrait(itemId: Int, traitId: Int) {
@@ -164,8 +188,9 @@ object DAOItem {
         val sql = "UPDATE item_trait SET deleted_at = '$date' WHERE item_id = $itemId AND trait_id = $traitId"
         DB.connection.use {
             val preparedStatement = it.prepareStatement(sql)
-            preparedStatement.execute()
+            rowsAffected = preparedStatement.executeUpdate()
         }
+        if (rowsAffected <= 0) throw Exception()
     }
 
     fun addCharacteristic(itemId: Int, characteristicId: Int) {
@@ -174,8 +199,9 @@ object DAOItem {
             val preparedStatement = it.prepareStatement(sql)
             preparedStatement.setInt(1, itemId)
             preparedStatement.setInt(2, characteristicId)
-            preparedStatement.execute()
+            rowsAffected = preparedStatement.executeUpdate()
         }
+        if (rowsAffected <= 0) throw Exception()
     }
 
     fun removeCharacteristic(itemId: Int, characteristicId: Int) {
@@ -183,8 +209,9 @@ object DAOItem {
         val sql = "UPDATE item_characteristics SET deleted_at = '$date' WHERE item_id = $itemId AND characteristics_id = $characteristicId"
         DB.connection.use {
             val preparedStatement = it.prepareStatement(sql)
-            preparedStatement.execute()
+            rowsAffected = preparedStatement.executeUpdate()
         }
+        if (rowsAffected <= 0) throw Exception()
     }
 
     private fun returnItemData(result: ResultSet, showCategory: Boolean = true): Item {
