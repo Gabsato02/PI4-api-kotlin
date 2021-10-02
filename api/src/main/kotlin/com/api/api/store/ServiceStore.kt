@@ -1,7 +1,9 @@
 package com.api.api.store
 
+import com.api.api.returnResponse
 import javax.ws.rs.*
 import javax.ws.rs.core.MediaType
+import javax.ws.rs.core.Response
 
 @Path("/store")
 class ServiceStore {
@@ -9,9 +11,9 @@ class ServiceStore {
     @Path("/list")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    fun listAll(@QueryParam("search") querySearch: String? ): List<Store> {
+    fun listAll(@QueryParam("search") querySearch: String?, @QueryParam("items") queryItems: Boolean = false ): List<Store> {
         return try {
-            DAOStore.listAll(querySearch)
+            DAOStore.listAll(querySearch, queryItems)
         } catch (error: Exception) {
             return emptyList()
         }
@@ -20,10 +22,11 @@ class ServiceStore {
     @Path("/list/{id}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    fun list(@PathParam("id") queryId: Int): Store {
+    fun list(@PathParam("id") queryId: Int, @QueryParam("items") queryItems: Boolean = false): Store {
         return try {
-            DAOStore.list(queryId)
+            DAOStore.list(queryId, queryItems)
         } catch (error: Exception) {
+            println(error)
             return Store()
         }
     }
@@ -89,5 +92,29 @@ class ServiceStore {
         }
     }
 
-//    @Path("/{storeId}/addItem")
+    @Path("/{storeId}/item/{itemId}")
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces("text/plain")
+    fun addCharacteristic(@PathParam("storeId") storeId: Int, @PathParam("itemId") itemId: Int): Response {
+        return try {
+            DAOStore.addItem(storeId, itemId)
+            returnResponse("success", null)
+        } catch (error: Exception) {
+            returnResponse("error", null)
+        }
+    }
+
+    @Path("/{storeId}/item/{itemId}")
+    @DELETE
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces("text/plain")
+    fun removeCharacteristic(@PathParam("storeId") storeId: Int, @PathParam("itemId") itemId: Int): Response {
+        return try {
+            DAOStore.removeItem(storeId, itemId)
+            returnResponse("success", null)
+        } catch (error: Exception) {
+            returnResponse("error", null)
+        }
+    }
 }

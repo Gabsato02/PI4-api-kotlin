@@ -1,8 +1,10 @@
 package com.api.api.category
 
+import com.api.api.returnResponse
 import java.lang.Exception
 import javax.ws.rs.*
 import javax.ws.rs.core.MediaType
+import javax.ws.rs.core.Response
 
 @Path("/category")
 class ServiceCategory {
@@ -10,24 +12,26 @@ class ServiceCategory {
     @Path("/list")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    fun listAll(@QueryParam("search") querySearch: String?, @QueryParam("items") queryItems: Boolean = false ): List<Category> {
+    fun listAll(@QueryParam("search") querySearch: String?, @QueryParam("items") queryItems: Boolean = false ): Response {
         return try {
-            DAOCategory.listAll(querySearch, queryItems)
+            val response = DAOCategory.listAll(querySearch, queryItems)
+            if (response.isEmpty()) return returnResponse("not_found", null)
+            returnResponse("success", response)
         } catch (error: Exception) {
-            println(error)
-            return emptyList()
+            returnResponse("not_found", null)
         }
     }
 
     @Path("/list/{id}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    fun list(@PathParam("id") queryId: Int,  @QueryParam("items") queryItems: Boolean = false): Category {
+    fun list(@PathParam("id") queryId: Int,  @QueryParam("items") queryItems: Boolean = false): Response {
         return try {
-            DAOCategory.list(queryId, queryItems)
+            val response = DAOCategory.list(queryId, queryItems)
+            if (response.id == 0) return returnResponse("not_found", null)
+            returnResponse("success", response)
         } catch (error: Exception) {
-            println(error)
-            return Category()
+            returnResponse("not_found", null)
         }
     }
 
@@ -35,12 +39,14 @@ class ServiceCategory {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces("text/plain")
-    fun insert(category: Category): String {
+    fun insert(category: Category): Response {
+        val validation = category.validate()
+        if (validation != "OK") return returnResponse("bad_request", validation)
         return try {
             category.let { DAOCategory.insert(it) }
-            "Registro inserido com sucesso."
+            returnResponse("success", null)
         } catch (error: Exception) {
-            "Não foi possível inserir a categoria. Tente novamente.\n${error.message}"
+            returnResponse("not_found", null)
         }
     }
 
@@ -48,12 +54,12 @@ class ServiceCategory {
     @DELETE
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces("text/plain")
-    fun delete(@PathParam("id") queryId: Int): String {
+    fun delete(@PathParam("id") queryId: Int): Response {
         return try {
             DAOCategory.delete(queryId)
-            "Registro apagado com sucesso."
+            returnResponse("success", null)
         } catch (error: Exception) {
-            "Não foi possível apagar a categoria. Tente novamente.\n${error.message}"
+            returnResponse("error", null)
         }
     }
 
@@ -61,12 +67,15 @@ class ServiceCategory {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces("text/plain")
-    fun update(@PathParam("id") queryId: Int, category: Category): String {
+    fun update(@PathParam("id") queryId: Int, category: Category): Response {
+        val validation = category.validate()
+        if (validation != "OK") return returnResponse("bad_request", validation)
+
         return try {
             DAOCategory.update(queryId, category)
-            "Registro atualizado com sucesso."
+            returnResponse("success", null)
         } catch (error: Exception) {
-            "Não foi possível atualizar a categoria. Tente novamente.\n${error.message}"
+            returnResponse("error", null)
         }
     }
 
@@ -74,12 +83,12 @@ class ServiceCategory {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.TEXT_PLAIN)
-    fun restore(@PathParam("id") queryId: Int): String {
+    fun restore(@PathParam("id") queryId: Int): Response {
         return try {
             DAOCategory.restore(queryId)
-            "Categoria restaurada com sucesso."
+            returnResponse("success", null)
         } catch (error: Exception) {
-            "Não foi possível restaurar a categoria. Tente novamente.\n${error.message}"
+            returnResponse("error", null)
         }
     }
 }

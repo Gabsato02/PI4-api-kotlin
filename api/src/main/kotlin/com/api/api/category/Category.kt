@@ -9,4 +9,9 @@ data class Category (
         var updated_at: String? = null,
         var deleted_at: String? = null,
         var items: List<Item>? = null
-)
+) {
+    fun validate(): String {
+        if (name.isNullOrBlank()) return "O nome não deve estar em branco."
+        return "OK"
+    }
+}
