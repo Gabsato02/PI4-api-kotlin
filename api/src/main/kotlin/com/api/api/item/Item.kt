@@ -21,7 +21,7 @@ data class Item(
     fun validate(): String {
         if (name.isNullOrBlank()) return "O nome não deve estar em branco."
         if (price <= 0) return "O preço deve ser maior que 0."
-        if (category_id == 0) return "ID de categoria inválido."
+        if (category_id <= 0) return "ID de categoria inválido."
         return "OK"
     }
 }
