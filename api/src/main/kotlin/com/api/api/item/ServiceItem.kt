@@ -1,9 +1,7 @@
 package com.api.api.item
 
 import com.api.api.returnResponse
-import com.api.api.trait.DAOTrait
 import java.lang.Exception
-import java.util.Objects.isNull
 import javax.ws.rs.*
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response

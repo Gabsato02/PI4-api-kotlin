@@ -1,6 +1,7 @@
 package com.api.api.trait
 
-import java.sql.SQLException
+import com.api.api.returnResponse
+import java.lang.Exception
 import javax.ws.rs.*
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
@@ -11,44 +12,52 @@ class ServiceTrait {
     @Path("/list")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    fun listAll(@QueryParam("search") querySearch: String? ): List<Trait> {
+    fun listAll(@QueryParam("search") querySearch: String? ): Response {
         return try {
-            DAOTrait.listAll(querySearch)
+            val response = DAOTrait.listAll(querySearch)
+            if (response.isEmpty()) return returnResponse("not_found", null)
+            returnResponse("success", response)
         } catch (error: Exception) {
-            return emptyList()
+            returnResponse("not_found", null)
         }
     }
 
     @Path("/list/{id}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    fun list(@PathParam("id") queryId: Int): Trait {
+    fun list(@PathParam("id") queryId: Int): Response {
         return try {
-            DAOTrait.list(queryId)
+            val response = DAOTrait.list(queryId)
+            if (response.id == 0) return returnResponse("not_found", null)
+            returnResponse("success", response)
         } catch (error: Exception) {
-            return Trait()
+            returnResponse("not_found", null)
         }
     }
 
     @Path("/list/deleted")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    fun listAllDeleted(@QueryParam("search") querySearch: String? ): List<Trait> {
+    fun listAllDeleted(@QueryParam("search") querySearch: String? ): Response {
         return try {
-            DAOTrait.listAllDeleted(querySearch)
+            val response =  DAOTrait.listAllDeleted(querySearch)
+            if (response.isEmpty()) return returnResponse("not_found", null)
+            returnResponse("success", response)
         } catch (error: Exception) {
-            return emptyList()
+            returnResponse("not_found", null)
         }
     }
 
     @Path("/list/deleted/{id}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    fun listDeleted(@PathParam("id") queryId: Int): Trait {
+    fun listDeleted(@PathParam("id") queryId: Int): Response {
         return try {
-            DAOTrait.listDeleted(queryId)
+            val response = DAOTrait.listDeleted(queryId)
+            if (response.id == 0) return returnResponse("not_found", null)
+            returnResponse("success", response)
         } catch (error: Exception) {
-            return Trait()
+            returnResponse("not_found", null)
         }
     }
 
@@ -57,17 +66,13 @@ class ServiceTrait {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.TEXT_PLAIN)
     fun insert(trait: Trait): Response {
-        val isValid = trait.validate()
-
-        if (!isValid) return Response.status(Response.Status.BAD_REQUEST)
-                                     .entity("Parâmetros incorretos. Tente novamente.")
-                                     .build()
-
+        val validation = trait.validate()
+        if (validation != "OK") return returnResponse("bad_request", validation)
         return try {
             trait.let { DAOTrait.insert(it) }
-            Response.status(Response.Status.OK).entity("Registro inserido com sucesso.").build()
+            returnResponse("success", null)
         } catch (error: Exception) {
-            Response.status(Response.Status.BAD_REQUEST).entity("Não foi possível executar a operação.").build()
+            returnResponse("not_found", null)
         }
     }
 
@@ -75,12 +80,12 @@ class ServiceTrait {
     @DELETE
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.TEXT_PLAIN)
-    fun delete(@PathParam("id") queryId: Int): String {
+    fun delete(@PathParam("id") queryId: Int): Response {
         return try {
             DAOTrait.delete(queryId)
-            "Registro apagado com sucesso."
+            returnResponse("success", null)
         } catch (error: Exception) {
-            "Não foi possível apagar o traço. Tente novamente.\n${error.message}"
+            returnResponse("not_found", null)
         }
     }
 
@@ -88,12 +93,14 @@ class ServiceTrait {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.TEXT_PLAIN)
-    fun update(@PathParam("id") queryId: Int, trait: Trait): String {
+    fun update(@PathParam("id") queryId: Int, trait: Trait): Response {
+        val validation = trait.validate()
+        if (validation != "OK") return returnResponse("bad_request", validation)
         return try {
             DAOTrait.update(queryId, trait)
-            "Registro atualizado com sucesso."
+            returnResponse("success", null)
         } catch (error: Exception) {
-            "Não foi possível atualizar o traço. Tente novamente.\n${error.message}"
+            returnResponse("not_found", null)
         }
     }
 
@@ -101,12 +108,12 @@ class ServiceTrait {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.TEXT_PLAIN)
-    fun restore(@PathParam("id") queryId: Int): String {
+    fun restore(@PathParam("id") queryId: Int): Response {
         return try {
             DAOTrait.restore(queryId)
-            "Registro restaurado com sucesso."
+            returnResponse("success", null)
         } catch (error: Exception) {
-            "Não foi possível restaurar o traço. Tente novamente.\n${error.message}"
+            returnResponse("not_found", null)
         }
     }
 }
