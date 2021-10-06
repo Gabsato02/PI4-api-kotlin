@@ -1,19 +1,19 @@
-package com.api.api.characteristics
+package com.api.api.user
 
 import com.api.api.returnResponse
-import javax.ws.rs.core.Response
 import javax.ws.rs.*
 import javax.ws.rs.core.MediaType
+import javax.ws.rs.core.Response
 
-@Path("/characteristic")
-class ServiceCharacteristic {
+@Path("/user")
+class ServiceUser {
 
     @Path("/list")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     fun listAll(@QueryParam("search") querySearch: String? ): Response {
         return try {
-            val response = DAOCharacteristics.listAll(querySearch)
+            val response = DAOUser.listAll(querySearch)
             if (response.isEmpty()) return returnResponse("not_found", null)
             returnResponse("success", response)
         } catch (error: Exception) {
@@ -26,33 +26,7 @@ class ServiceCharacteristic {
     @Produces(MediaType.APPLICATION_JSON)
     fun list(@PathParam("id") queryId: Int): Response {
         return try {
-            val response = DAOCharacteristics.list(queryId)
-            if (response.id == 0) return returnResponse("not_found", null)
-            returnResponse("success", response)
-        } catch (error: Exception) {
-            returnResponse("not_found", null)
-        }
-    }
-
-    @Path("/list/deleted")
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    fun listAllDeleted(@QueryParam("search") querySearch: String? ): Response {
-        return try {
-            val response = DAOCharacteristics.listAllDeleted(querySearch)
-            if (response.isEmpty()) return returnResponse("not_found", null)
-            returnResponse("success", response)
-        } catch (error: Exception) {
-            returnResponse("not_found", null)
-        }
-    }
-
-    @Path("/list/deleted/{id}")
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    fun listDeleted(@PathParam("id") queryId: Int): Response {
-        return try {
-            val response = DAOCharacteristics.listDeleted(queryId)
+            val response = DAOUser.list(queryId)
             if (response.id == 0) return returnResponse("not_found", null)
             returnResponse("success", response)
         } catch (error: Exception) {
@@ -64,11 +38,11 @@ class ServiceCharacteristic {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.TEXT_PLAIN)
-    fun insert(characteristic: Characteristic): Response {
-        val validation = characteristic.validate()
+    fun insert(user: User): Response {
+        val validation = user.validate()
         if (validation != "OK") return returnResponse("bad_request", validation)
         return try {
-            characteristic.let { DAOCharacteristics.insert(it) }
+            user.let { DAOUser.insert(it) }
             returnResponse("success", null)
         } catch (error: Exception) {
             returnResponse("not_found", null)
@@ -81,7 +55,7 @@ class ServiceCharacteristic {
     @Produces(MediaType.TEXT_PLAIN)
     fun delete(@PathParam("id") queryId: Int): Response {
         return try {
-            DAOCharacteristics.delete(queryId)
+            DAOUser.delete(queryId)
             returnResponse("success", null)
         } catch (error: Exception) {
             returnResponse("not_found", null)
@@ -92,11 +66,11 @@ class ServiceCharacteristic {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.TEXT_PLAIN)
-    fun update(@PathParam("id") queryId: Int, characteristic: Characteristic): Response {
-        val validation = characteristic.validate()
+    fun update(@PathParam("id") queryId: Int, user: User): Response {
+        val validation = user.validate()
         if (validation != "OK") return returnResponse("bad_request", validation)
         return try {
-            DAOCharacteristics.update(queryId, characteristic)
+            DAOUser.update(queryId, user)
             returnResponse("success", null)
         } catch (error: Exception) {
             returnResponse("not_found", null)
@@ -109,7 +83,7 @@ class ServiceCharacteristic {
     @Produces(MediaType.TEXT_PLAIN)
     fun restore(@PathParam("id") queryId: Int): Response {
         return try {
-            DAOCharacteristics.restore(queryId)
+            DAOUser.restore(queryId)
             returnResponse("success", null)
         } catch (error: Exception) {
             returnResponse("not_found", null)

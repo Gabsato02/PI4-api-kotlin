@@ -105,7 +105,7 @@ object DAOCharacteristics {
     }
 
     fun update(id: Int, characteristic: Characteristic)  {
-        val currentData = DAOCharacteristics.list(id)
+        val currentData = list(id)
         val name = if (characteristic.name.isNullOrBlank()) currentData.name else characteristic.name
         val description = if (characteristic.description.isNullOrBlank()) currentData.description else characteristic.description
         val characteristicsValue = if (characteristic.characteristics_value.isNullOrBlank()) currentData.characteristics_value else characteristic.characteristics_value
