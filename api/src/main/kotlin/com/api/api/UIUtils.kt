@@ -4,6 +4,8 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.Objects.isNull
 import javax.ws.rs.core.Response
+import java.math.BigInteger
+import java.security.MessageDigest
 
 fun formatDateToTimestamp(date: Date): String {
     val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
@@ -26,4 +28,9 @@ fun returnResponse(responseType: String? = "", responseBody: Any?): Response {
         "not_found" -> Response.status(Response.Status.NOT_FOUND).entity(body).build()
         else -> Response.status(Response.Status.BAD_REQUEST).entity(body).build()
     }
+}
+
+fun md5(input: String): String {
+    val md = MessageDigest.getInstance("MD5")
+    return BigInteger(1, md.digest(input.toByteArray())).toString(16).padStart(32, '0')
 }
