@@ -89,4 +89,17 @@ class ServiceUser {
             returnResponse("not_found", null)
         }
     }
+
+    @Path("/login")
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.TEXT_PLAIN)
+    fun login(login: Login): Response {
+        return try {
+            login.let { DAOUser.login(it) }
+            returnResponse("success", null)
+        } catch (error: Exception) {
+            returnResponse("unauthorized", null)
+        }
+    }
 }

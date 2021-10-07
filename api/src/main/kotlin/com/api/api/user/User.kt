@@ -14,7 +14,9 @@ data class User(
         if (name.isNullOrBlank()) return "O nome não deve estar em branco."
         if (email.isNullOrBlank()) return "O e-mail não deve estar em branco."
         if (password.isNullOrBlank()) return "A senha não deve estar em branco."
+        if (password!!.length < 8) return "A senha não deve ser menor que 8 caracteres."
         if (role.isNullOrBlank()) return "O Tipo de usuário não deve estar em branco."
         return "OK"
     }
 }
+

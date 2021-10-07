@@ -1,7 +1,7 @@
 package com.api.api.user
 
 import com.api.api.DB
-import java.lang.Exception
+import com.api.api.md5
 import java.sql.ResultSet
 import java.text.SimpleDateFormat
 import java.util.*
@@ -42,7 +42,8 @@ object DAOUser {
     }
 
     fun insert(user: User) {
-        val sql = "INSERT INTO user (name, email, password, role) VALUES (?, ?, ?, ?)"
+        val sql = "INSERT INTO user (name, email, password, role) SELECT ?, ?, ?, ? WHERE NOT EXISTS (SELECT * FROM user WHERE email = ?) LIMIT 1"
+
         var rowsAffected = 0
         DB.connection.use {
             val preparedStatement = it.prepareStatement(sql)
@@ -51,6 +52,7 @@ object DAOUser {
             preparedStatement.setString(2, user.email)
             preparedStatement.setString(3, user.password)
             preparedStatement.setString(4, user.role)
+            preparedStatement.setString(5, user.email)
 
             rowsAffected = preparedStatement.executeUpdate()
         }
@@ -97,6 +99,21 @@ object DAOUser {
             val preparedStatement = it.prepareStatement(sql)
             preparedStatement.execute()
         }
+    }
+
+    fun login(login: Login) {
+        val sql = "SELECT * FROM user WHERE email = '${login.email}' AND password = '${login.password}'"
+        var userLogin = Login()
+
+        DB.connection.use {
+            val preparedStatement = it.prepareStatement(sql)
+            val resultSet = preparedStatement.executeQuery()
+            if(resultSet.next()) {
+                userLogin.email = resultSet.getString("email")
+                userLogin.password = resultSet.getString("password")
+            }
+        }
+        if (userLogin.email.isNullOrBlank() || userLogin.password.isNullOrBlank()) throw Exception()
     }
 
     private fun returnUserData(resultSet: ResultSet): User {
