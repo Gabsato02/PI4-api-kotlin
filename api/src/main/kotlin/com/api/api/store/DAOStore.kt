@@ -91,7 +91,7 @@ object DAOStore {
 
             preparedStatement.setString(1, store.name)
             preparedStatement.setString(2, store.description)
-            preparedStatement.setInt(3, 1)
+            preparedStatement.setInt(3, store.owner_id)
             preparedStatement.execute()
         }
     }
@@ -144,6 +144,14 @@ object DAOStore {
             rowsAffected = preparedStatement.executeUpdate()
         }
         if (rowsAffected <= 0) throw Exception()
+    }
+
+    fun restore(id: Int) {
+        val sql = "UPDATE store SET deleted_at = null WHERE id = $id"
+        DB.connection.use {
+            val preparedStatement = it.prepareStatement(sql)
+            preparedStatement.execute()
+        }
     }
 
     private fun returnStoreData(resultSet: ResultSet, shouldBringItems: Boolean): Store {

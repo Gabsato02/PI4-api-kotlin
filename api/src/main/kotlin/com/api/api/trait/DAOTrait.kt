@@ -37,10 +37,7 @@ object DAOTrait {
         DB.connection.use {
             val preparedStatement = it.prepareStatement(sql)
             val resultSet = preparedStatement.executeQuery()
-
-            if(resultSet.next()){
-                trait = returnTraitData(resultSet)
-            }
+            if(resultSet.next()) trait = returnTraitData(resultSet)
         }
         return trait
     }
