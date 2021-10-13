@@ -110,6 +110,7 @@ object DAOTrait {
 
     fun update(id: Int, trait: Trait)  {
         val currentData = list(id)
+        println(currentData.description)
         val name = if (trait.name.isNullOrBlank()) currentData.name else trait.name
         val description = if (trait.description.isNullOrBlank()) currentData.description else trait.description
 
