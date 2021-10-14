@@ -13,20 +13,24 @@ fun formatDateToTimestamp(date: Date): String {
 }
 
 fun returnResponse(responseType: String? = "", responseBody: Any?): Response {
-    val body = when(responseType) {
-        "success" -> if(isNull(responseBody)) "Operação realizada com sucesso." else responseBody
-        "bad_request" -> if(isNull(responseBody)) "Parâmetros incorretos. Tente novamente." else responseBody
-        "unauthorized" -> if(isNull(responseBody)) "Não autorizado. Tente novamente." else responseBody
-        "not_found" -> if(isNull(responseBody)) "Não foram encontrados resultados." else responseBody
-        else -> if(isNull(responseBody)) "Não foi possível executar a operação." else responseBody
+    val customResponse = CustomResponse()
+
+    customResponse.message = when(responseType) {
+        "success" -> "Operação realizada com sucesso."
+        "bad_request" -> "Parâmetros incorretos. Tente novamente."
+        "unauthorized" -> "Não autorizado. Tente novamente."
+        "not_found" -> "Não foram encontrados resultados."
+        else -> "Não foi possível executar a operação."
     }
 
+    val payload = if(isNull(responseBody)) customResponse else responseBody
+
     return when(responseType) {
-        "success" -> Response.status(Response.Status.OK).entity(body).build()
-        "bad_request" -> Response.status(Response.Status.BAD_REQUEST).entity(body).build()
-        "unauthorized" -> Response.status(Response.Status.UNAUTHORIZED).entity(body).build()
-        "not_found" -> Response.status(Response.Status.NOT_FOUND).entity(body).build()
-        else -> Response.status(Response.Status.BAD_REQUEST).entity(body).build()
+        "success" -> Response.status(Response.Status.OK).entity(payload).build()
+        "bad_request" -> Response.status(Response.Status.BAD_REQUEST).entity(payload).build()
+        "unauthorized" -> Response.status(Response.Status.UNAUTHORIZED).entity(payload).build()
+        "not_found" -> Response.status(Response.Status.NOT_FOUND).entity(payload).build()
+        else -> Response.status(Response.Status.BAD_REQUEST).entity(payload).build()
     }
 }
 

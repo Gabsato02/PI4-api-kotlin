@@ -38,7 +38,7 @@ class ServiceCategory {
     @Path("/create")
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces("text/plain")
+    @Produces(MediaType.APPLICATION_JSON)
     fun insert(category: Category): Response {
         val validation = category.validate()
         if (validation != "OK") return returnResponse("bad_request", validation)
@@ -53,7 +53,7 @@ class ServiceCategory {
     @Path("/delete/{id}")
     @DELETE
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces("text/plain")
+    @Produces(MediaType.APPLICATION_JSON)
     fun delete(@PathParam("id") queryId: Int): Response {
         return try {
             DAOCategory.delete(queryId)
@@ -66,7 +66,7 @@ class ServiceCategory {
     @Path("/update/{id}")
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces("text/plain")
+    @Produces(MediaType.APPLICATION_JSON)
     fun update(@PathParam("id") queryId: Int, category: Category): Response {
         val validation = category.validate()
         if (validation != "OK") return returnResponse("bad_request", validation)
@@ -82,7 +82,7 @@ class ServiceCategory {
     @Path("/restore/{id}")
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_JSON)
     fun restore(@PathParam("id") queryId: Int): Response {
         return try {
             DAOCategory.restore(queryId)
