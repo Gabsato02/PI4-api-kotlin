@@ -109,7 +109,7 @@ object DAOTrait {
         val currentData = list(id)
         println(currentData.description)
         val name = if (trait.name.isNullOrBlank()) currentData.name else trait.name
-        val description = if (trait.description.isNullOrBlank()) currentData.description else trait.description
+        val description = trait.description
 
         val sql = "UPDATE trait SET name = ?, description = ? WHERE id = $id"
 

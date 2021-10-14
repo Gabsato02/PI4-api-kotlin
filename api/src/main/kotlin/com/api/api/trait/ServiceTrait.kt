@@ -64,7 +64,7 @@ class ServiceTrait {
     @Path("/create")
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_JSON)
     fun insert(trait: Trait): Response {
         val validation = trait.validate()
         if (validation != "OK") return returnResponse("bad_request", validation)
@@ -79,7 +79,7 @@ class ServiceTrait {
     @Path("/delete/{id}")
     @DELETE
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_JSON)
     fun delete(@PathParam("id") queryId: Int): Response {
         return try {
             DAOTrait.delete(queryId)
@@ -92,7 +92,7 @@ class ServiceTrait {
     @Path("/update/{id}")
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_JSON)
     fun update(@PathParam("id") queryId: Int, trait: Trait): Response {
         val validation = trait.validate()
         if (validation != "OK") return returnResponse("bad_request", validation)
@@ -107,7 +107,7 @@ class ServiceTrait {
     @Path("/restore/{id}")
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_JSON)
     fun restore(@PathParam("id") queryId: Int): Response {
         return try {
             DAOTrait.restore(queryId)
