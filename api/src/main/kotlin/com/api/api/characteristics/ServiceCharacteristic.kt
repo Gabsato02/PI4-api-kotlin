@@ -14,7 +14,7 @@ class ServiceCharacteristic {
     fun listAll(@QueryParam("search") querySearch: String? ): Response {
         return try {
             val response = DAOCharacteristics.listAll(querySearch)
-            if (response.isEmpty()) return returnResponse("not_found", null)
+            if (response.isEmpty()) return returnResponse("success", response)
             returnResponse("success", response)
         } catch (error: Exception) {
             returnResponse("not_found", null)
@@ -40,7 +40,7 @@ class ServiceCharacteristic {
     fun listAllDeleted(@QueryParam("search") querySearch: String? ): Response {
         return try {
             val response = DAOCharacteristics.listAllDeleted(querySearch)
-            if (response.isEmpty()) return returnResponse("not_found", null)
+            if (response.isEmpty()) return returnResponse("success", response)
             returnResponse("success", response)
         } catch (error: Exception) {
             returnResponse("not_found", null)
@@ -63,7 +63,7 @@ class ServiceCharacteristic {
     @Path("/create")
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_JSON)
     fun insert(characteristic: Characteristic): Response {
         val validation = characteristic.validate()
         if (validation != "OK") return returnResponse("bad_request", validation)
@@ -78,7 +78,7 @@ class ServiceCharacteristic {
     @Path("/delete/{id}")
     @DELETE
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_JSON)
     fun delete(@PathParam("id") queryId: Int): Response {
         return try {
             DAOCharacteristics.delete(queryId)
@@ -91,7 +91,7 @@ class ServiceCharacteristic {
     @Path("/update/{id}")
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_JSON)
     fun update(@PathParam("id") queryId: Int, characteristic: Characteristic): Response {
         val validation = characteristic.validate()
         if (validation != "OK") return returnResponse("bad_request", validation)
@@ -106,7 +106,7 @@ class ServiceCharacteristic {
     @Path("/restore/{id}")
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_JSON)
     fun restore(@PathParam("id") queryId: Int): Response {
         return try {
             DAOCharacteristics.restore(queryId)

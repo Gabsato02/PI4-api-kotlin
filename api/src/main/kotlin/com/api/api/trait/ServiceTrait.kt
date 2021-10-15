@@ -15,7 +15,7 @@ class ServiceTrait {
     fun listAll(@QueryParam("search") querySearch: String? ): Response {
         return try {
             val response = DAOTrait.listAll(querySearch)
-            if (response.isEmpty()) return returnResponse("not_found", null)
+            if (response.isEmpty()) return returnResponse("success", response)
             returnResponse("success", response)
         } catch (error: Exception) {
             returnResponse("not_found", null)
@@ -41,7 +41,7 @@ class ServiceTrait {
     fun listAllDeleted(@QueryParam("search") querySearch: String? ): Response {
         return try {
             val response =  DAOTrait.listAllDeleted(querySearch)
-            if (response.isEmpty()) return returnResponse("not_found", null)
+            if (response.isEmpty()) return returnResponse("success", response)
             returnResponse("success", response)
         } catch (error: Exception) {
             returnResponse("not_found", null)
