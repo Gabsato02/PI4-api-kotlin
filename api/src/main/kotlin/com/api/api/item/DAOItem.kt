@@ -9,6 +9,7 @@ import com.api.api.trait.DAOTrait
 import com.api.api.trait.Trait
 import java.lang.Exception
 import java.sql.ResultSet
+import java.sql.Statement
 import java.util.*
 
 object DAOItem {
@@ -112,8 +113,9 @@ object DAOItem {
 
     fun insert(item: Item) {
         val sql = "INSERT INTO item (name, price, description, volume, category_id) VALUES (?, ?, ?, ?, ?)"
+        var lastInsertedId = 0
         DB.connection.use {
-            val preparedStatement = it.prepareStatement(sql)
+            val preparedStatement = it.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)
 
             preparedStatement.setString(1, item.name)
             preparedStatement.setInt(2, item.price)
@@ -122,6 +124,22 @@ object DAOItem {
             preparedStatement.setInt(5, item.category_id)
 
             rowsAffected = preparedStatement.executeUpdate()
+            val generatedKeys = preparedStatement.generatedKeys
+            if (generatedKeys.next()) lastInsertedId = generatedKeys.getInt(1)
+
+            val traits = item.traits
+            if (traits != null) {
+                for (trait in traits) {
+                    addTrait(lastInsertedId, trait.id)
+                }
+            }
+
+            val characteristics = item.characteristics
+            if (characteristics != null) {
+                for (characteristic in characteristics) {
+                    addCharacteristic(lastInsertedId, characteristic.id)
+                }
+            }
         }
         if (rowsAffected <= 0) throw Exception()
     }
@@ -159,6 +177,21 @@ object DAOItem {
 
             rowsAffected = preparedStatement.executeUpdate()
         }
+
+        val traits = item.traits
+        if (traits != null) {
+            for (trait in traits) {
+                addTrait(id, trait.id)
+            }
+        }
+
+        val characteristics = item.characteristics
+        if (characteristics != null) {
+            for (characteristic in characteristics) {
+                addCharacteristic(id, characteristic.id)
+            }
+        }
+
         if (rowsAffected <= 0) throw Exception()
     }
 

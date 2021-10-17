@@ -13,7 +13,7 @@ object DAOCharacteristics {
             "WHERE name LIKE '%$querySearch%' AND deleted_at IS NULL"
         }
 
-        val sql = "SELECT * FROM characteristics $search"
+        val sql = "SELECT * FROM characteristics $search ORDER BY name"
         val characteristicList = arrayListOf<Characteristic>()
 
         DB.connection.use {

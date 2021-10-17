@@ -93,7 +93,7 @@ class ServiceItem {
         }
     }
 
-    @Path("/{itemId}/trait/{traitId}")
+    /* DEPRECATED - @Path("/{itemId}/trait/{traitId}")
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -104,7 +104,7 @@ class ServiceItem {
         } catch (error: Exception) {
             returnResponse("", null)
         }
-    }
+    }*/
 
     @Path("/{itemId}/trait/{traitId}")
     @DELETE
@@ -119,7 +119,7 @@ class ServiceItem {
         }
     }
 
-    @Path("/{itemId}/characteristic/{characteristicId}")
+    /*DEPRECATED - @Path("/{itemId}/characteristic/{characteristicId}")
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -130,7 +130,7 @@ class ServiceItem {
         } catch (error: Exception) {
             returnResponse("error", null)
         }
-    }
+    }*/
 
     @Path("/{itemId}/characteristic/{characteristicId}")
     @DELETE

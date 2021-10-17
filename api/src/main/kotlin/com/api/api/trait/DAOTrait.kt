@@ -14,7 +14,7 @@ object DAOTrait {
         } else {
             "WHERE name LIKE '%$querySearch%' AND deleted_at IS NULL"
         }
-        val sql = "SELECT * FROM trait $search"
+        val sql = "SELECT * FROM trait $search ORDER BY name"
 
         val traitList = arrayListOf<Trait>()
 
