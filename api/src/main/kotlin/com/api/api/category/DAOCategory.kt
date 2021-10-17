@@ -12,7 +12,7 @@ object DAOCategory {
 
     fun listAll(querySearch: String?, queryItems: Boolean): List<Category> {
         val search = if (querySearch.isNullOrBlank()) "" else "WHERE name LIKE '%$querySearch%'"
-        val sql = "SELECT c.id, c.name, c.created_at, c.deleted_at, c.updated_at FROM category AS c $search"
+        val sql = "SELECT c.id, c.name, c.created_at, c.deleted_at, c.updated_at FROM category AS c $search ORDER BY c.name"
 
         val categoryList = arrayListOf<Category>()
 
