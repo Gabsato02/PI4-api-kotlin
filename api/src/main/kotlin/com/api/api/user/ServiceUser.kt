@@ -37,7 +37,7 @@ class ServiceUser {
     @Path("/create")
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_JSON)
     fun insert(user: User): Response {
         val validation = user.validate()
         if (validation != "OK") return returnResponse("bad_request", validation)
@@ -52,7 +52,7 @@ class ServiceUser {
     @Path("/delete/{id}")
     @DELETE
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_JSON)
     fun delete(@PathParam("id") queryId: Int): Response {
         return try {
             DAOUser.delete(queryId)
@@ -65,7 +65,7 @@ class ServiceUser {
     @Path("/update/{id}")
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_JSON)
     fun update(@PathParam("id") queryId: Int, user: User): Response {
         val validation = user.validate()
         if (validation != "OK") return returnResponse("bad_request", validation)
@@ -80,7 +80,7 @@ class ServiceUser {
     @Path("/restore/{id}")
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_JSON)
     fun restore(@PathParam("id") queryId: Int): Response {
         return try {
             DAOUser.restore(queryId)
@@ -93,7 +93,7 @@ class ServiceUser {
     @Path("/login")
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_JSON)
     fun login(login: Login): Response {
         return try {
             login.let { DAOUser.login(it) }
