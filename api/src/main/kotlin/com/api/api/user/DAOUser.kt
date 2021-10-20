@@ -8,11 +8,7 @@ import java.util.*
 
 object DAOUser {
     fun listAll(querySearch: String?): List<User> {
-        val search = if (querySearch.isNullOrBlank()) {
-            "WHERE deleted_at IS NULL"
-        } else {
-            "WHERE name LIKE '%$querySearch%' AND deleted_at IS NULL"
-        }
+        val search = if (querySearch.isNullOrBlank()) "" else "WHERE name LIKE '%$querySearch%'"
         val sql = "SELECT * FROM user $search"
 
         val userList = arrayListOf<User>()
@@ -30,7 +26,7 @@ object DAOUser {
     }
 
     fun list(id: Int): User {
-        val sql = "SELECT * FROM user WHERE id = $id AND deleted_at IS NULL"
+        val sql = "SELECT * FROM user WHERE id = $id"
         var user = User()
 
         DB.connection.use {
