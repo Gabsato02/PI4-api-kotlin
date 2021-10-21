@@ -12,7 +12,7 @@ object DAOCategory {
 
     fun listAll(querySearch: String?, queryItems: Boolean): List<Category> {
         val search = if (querySearch.isNullOrBlank()) "" else "WHERE name LIKE '%$querySearch%'"
-        val sql = "SELECT c.id, c.name, c.created_at, c.deleted_at, c.updated_at FROM category AS c $search ORDER BY c.name"
+        val sql = "SELECT c.id, c.name, c.created_at, c.deleted_at, c.updated_at, c.image FROM category AS c $search ORDER BY c.name"
 
         val categoryList = arrayListOf<Category>()
 
@@ -40,10 +40,11 @@ object DAOCategory {
     }
 
     fun insert(category: Category) {
-        val sql = "INSERT INTO category (name) VALUES (?)"
+        val sql = "INSERT INTO category (name, image) VALUES (?, ?)"
         DB.connection.use {
             val preparedStatement = it.prepareStatement(sql)
             preparedStatement.setString(1, category.name)
+            preparedStatement.setString(2, category.image)
             rowsAffected = preparedStatement.executeUpdate()
         }
         if (rowsAffected <= 0) throw Exception()
@@ -64,12 +65,14 @@ object DAOCategory {
     fun update(id: Int, category: Category) {
         val currentData = list(id, false)
         val name = if (category.name.isNullOrBlank()) currentData.name else category.name
+        val image = if (category.image.isNullOrBlank()) currentData.image else category.image
 
-        val sql = "UPDATE category SET name = ? WHERE id = $id"
+        val sql = "UPDATE category SET name = ?, image = ? WHERE id = $id"
 
         DB.connection.use {
             val preparedStatement = it.prepareStatement(sql)
             preparedStatement.setString(1, name)
+            preparedStatement.setString(2, image)
             rowsAffected = preparedStatement.executeUpdate()
         }
         if (rowsAffected <= 0) throw Exception()
@@ -94,6 +97,7 @@ object DAOCategory {
         category.updated_at = result.getString("c.updated_at")
         category.deleted_at = result.getString("c.deleted_at")
         category.items = if(shouldBringItems) DAOItem.listItemsByCategory(category.id) else null
+        category.image = result.getString("c.image");
         return category
     }
 
