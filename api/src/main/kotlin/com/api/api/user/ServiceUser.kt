@@ -1,5 +1,6 @@
 package com.api.api.user
 
+import com.api.api.CustomResponse
 import com.api.api.returnResponse
 import javax.ws.rs.*
 import javax.ws.rs.core.MediaType
@@ -96,8 +97,10 @@ class ServiceUser {
     @Produces(MediaType.APPLICATION_JSON)
     fun login(login: Login): Response {
         return try {
-            login.let { DAOUser.login(it) }
-            returnResponse("success", null)
+            val response = login.let { DAOUser.login(it) }
+            val customResponse = CustomResponse()
+            customResponse.message = response
+            Response.status(Response.Status.OK).entity(customResponse).build()
         } catch (error: Exception) {
             returnResponse("unauthorized", null)
         }
