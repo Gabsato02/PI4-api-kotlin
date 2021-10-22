@@ -38,7 +38,7 @@ object DAOUser {
     }
 
     fun insert(user: User) {
-        val sql = "INSERT INTO user (name, email, password, role) SELECT ?, ?, ?, ? WHERE NOT EXISTS (SELECT * FROM user WHERE email = ?) LIMIT 1"
+        val sql = "INSERT INTO user (name, email, password, role, image) SELECT ?, ?, ?, ?, ? WHERE NOT EXISTS (SELECT * FROM user WHERE email = ?) LIMIT 1"
 
         var rowsAffected = 0
         DB.connection.use {
@@ -48,7 +48,8 @@ object DAOUser {
             preparedStatement.setString(2, user.email)
             preparedStatement.setString(3, user.password)
             preparedStatement.setString(4, user.role)
-            preparedStatement.setString(5, user.email)
+            preparedStatement.setString(5, user.image)
+            preparedStatement.setString(6, user.email)
 
             rowsAffected = preparedStatement.executeUpdate()
         }
@@ -97,9 +98,10 @@ object DAOUser {
         }
     }
 
-    fun login(login: Login) {
+    fun login(login: Login): String {
         val sql = "SELECT * FROM user WHERE email = '${login.email}' AND password = '${login.password}'"
         var userLogin = Login()
+        var userRole = ""
 
         DB.connection.use {
             val preparedStatement = it.prepareStatement(sql)
@@ -107,10 +109,16 @@ object DAOUser {
             if(resultSet.next()) {
                 userLogin.email = resultSet.getString("email")
                 userLogin.password = resultSet.getString("password")
+                userRole = resultSet.getString("role")
             }
         }
-        if (userLogin.email.isNullOrBlank() || userLogin.password.isNullOrBlank()) throw Exception()
+        if (userLogin.email.isNullOrBlank() || userLogin.password.isNullOrBlank()) {
+            throw Exception()
+        } else {
+            return userRole
+        }
     }
+
 
     private fun returnUserData(resultSet: ResultSet): User {
         val user = User()
@@ -119,6 +127,7 @@ object DAOUser {
         user.email = resultSet.getString("email")
         user.password = resultSet.getString("password")
         user.role = resultSet.getString("role")
+        user.image = resultSet.getString("image")
         user.created_at = resultSet.getString("created_at")
         user.updated_at = resultSet.getString("updated_at")
         user.deleted_at = resultSet.getString("deleted_at")
