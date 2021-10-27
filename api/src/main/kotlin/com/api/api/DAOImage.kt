@@ -15,7 +15,6 @@ object DAOImage {
             if (result.next()) {
                 val image = result.getString("image")
                 byte = Base64.getMimeDecoder().decode(image)
-                println(byte)
             }
         }
         val b = ByteArrayInputStream(byte)

@@ -27,7 +27,6 @@ class ServiceImage {
             ImageIO.write(image, "png", baos)
             baos.toByteArray()
         } catch (error: Exception) {
-            println(error)
             return byteArrayOf()
         }
     }
