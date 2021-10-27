@@ -24,7 +24,7 @@ class ServiceImage {
         return try {
             val image = DAOImage.list(type, queryId)
             val baos = ByteArrayOutputStream()
-            ImageIO.write(image, "png", baos)
+            ImageIO.write(image, "jpg", baos)
             baos.toByteArray()
         } catch (error: Exception) {
             return byteArrayOf()
