@@ -34,10 +34,12 @@
           <element id="library" level="project" name="Maven: org.glassfish.jersey.ext:jersey-entity-filtering:2.34" />
           <element id="library" level="project" name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.12.2" />
           <element id="library" level="project" name="Maven: com.fasterxml.jackson.core:jackson-databind:2.12.2" />
-          <element id="library" level="project" name="Maven: com.fasterxml.jackson.core:jackson-core:2.12.2" />
           <element id="library" level="project" name="Maven: com.fasterxml.jackson.module:jackson-module-jaxb-annotations:2.12.2" />
           <element id="library" level="project" name="Maven: jakarta.xml.bind:jakarta.xml.bind-api:2.3.2" />
           <element id="library" level="project" name="Maven: jakarta.activation:jakarta.activation-api:1.2.1" />
+          <element id="library" level="project" name="Maven: com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:2.2.3" />
+          <element id="library" level="project" name="Maven: com.fasterxml.jackson.jaxrs:jackson-jaxrs-base:2.2.3" />
+          <element id="library" level="project" name="Maven: com.fasterxml.jackson.core:jackson-core:2.2.3" />
           <element id="library" level="project" name="Maven: org.glassfish.jersey.inject:jersey-hk2:2.34" />
           <element id="library" level="project" name="Maven: org.glassfish.hk2:hk2-locator:2.6.1" />
           <element id="library" level="project" name="Maven: org.glassfish.hk2.external:aopalliance-repackaged:2.6.1" />

@@ -1,7 +1,11 @@
 package com.api.api
 
 import com.api.api.category.DAOCategory
+import java.awt.Image
+import java.awt.image.BufferedImage
+import java.io.ByteArrayOutputStream
 import java.lang.Exception
+import javax.imageio.ImageIO
 import javax.ws.rs.GET
 import javax.ws.rs.Path
 import javax.ws.rs.PathParam
@@ -15,13 +19,16 @@ class ServiceImage {
 
     @Path("/{type}/{id}")
     @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    fun list(@PathParam("type") type: String, @PathParam("id") queryId: Int): Image {
+    @Produces("image/jpeg")
+    fun list(@PathParam("type") type: String, @PathParam("id") queryId: Int): ByteArray {
         return try {
-            return DAOImage.list(type, queryId)
-            // returnResponse("success", response)
+            val image = DAOImage.list(type, queryId)
+            val baos = ByteArrayOutputStream()
+            ImageIO.write(image, "png", baos)
+            baos.toByteArray()
         } catch (error: Exception) {
-            Image()
+            println(error)
+            return byteArrayOf()
         }
     }
 }
