@@ -112,7 +112,7 @@ object DAOItem {
     }
 
     fun insert(item: Item) {
-        val sql = "INSERT INTO item (name, price, description, volume, category_id) VALUES (?, ?, ?, ?, ?)"
+        val sql = "INSERT INTO item (name, price, description, volume, category_id, image) VALUES (?, ?, ?, ?, ?, ?)"
         var lastInsertedId = 0
         DB.connection.use {
             val preparedStatement = it.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)
@@ -122,6 +122,7 @@ object DAOItem {
             preparedStatement.setString(3, item.description)
             preparedStatement.setString(4, item.volume)
             preparedStatement.setInt(5, item.category_id)
+            preparedStatement.setString(6, item.image)
 
             rowsAffected = preparedStatement.executeUpdate()
             val generatedKeys = preparedStatement.generatedKeys
@@ -163,8 +164,9 @@ object DAOItem {
         val description = if (item.description.isNullOrBlank()) currentData.description else item.description
         val volume = if (item.volume.isNullOrBlank()) currentData.volume else item.volume
         val categoryId = if (item.category_id == 0) currentData.category_id else item.category_id
+        val image = if (item.image.isNullOrBlank()) currentData.image else item.image
 
-        val sql = "UPDATE item SET name = ?, price = ?, description = ?, volume = ?, category_id = ? WHERE id = $id"
+        val sql = "UPDATE item SET name = ?, price = ?, description = ?, volume = ?, category_id = ?, image = ? WHERE id = $id"
 
         DB.connection.use {
             val preparedStatement = it.prepareStatement(sql)
@@ -174,6 +176,7 @@ object DAOItem {
             preparedStatement.setString(3, description)
             preparedStatement.setString(4, volume)
             preparedStatement.setInt(5, categoryId)
+            preparedStatement.setString(6, image)
 
             rowsAffected = preparedStatement.executeUpdate()
         }
@@ -259,6 +262,7 @@ object DAOItem {
         item.characteristics = listItemCharacteristics(item.id)
         item.traits = listItemTraits(item.id)
         item.category_id = result.getInt("category_id")
+        item.image = result.getString("image")
         item.created_at = result.getString("created_at")
         item.updated_at = result.getString("updated_at")
         item.deleted_at = result.getString("deleted_at")

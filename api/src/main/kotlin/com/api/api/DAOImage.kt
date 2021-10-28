@@ -2,6 +2,7 @@ package com.api.api
 
 import java.awt.image.BufferedImage
 import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
 import java.util.*
 import javax.imageio.ImageIO
 
@@ -13,8 +14,10 @@ object DAOImage {
             val preparedStatement = it.prepareStatement(sql)
             val result = preparedStatement.executeQuery()
             if (result.next()) {
-                val image = result.getString("image")
-                byte = Base64.getMimeDecoder().decode(image)
+                var imageString = result.getString("image")
+                val imageType = if ("png" in imageString) "png" else "jpeg"
+                val sanitizedString = imageString.replace("data:image/$imageType;base64,", "")
+                byte = Base64.getMimeDecoder().decode(sanitizedString)
             }
         }
         val b = ByteArrayInputStream(byte)

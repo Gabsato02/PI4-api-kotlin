@@ -89,6 +89,7 @@ class ServiceItem {
             DAOItem.restore(queryId)
             returnResponse("success", null)
         } catch (error: Exception) {
+            println(error)
             returnResponse("error", null)
         }
     }
