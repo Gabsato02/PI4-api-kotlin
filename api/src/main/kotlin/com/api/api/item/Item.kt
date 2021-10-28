@@ -11,6 +11,7 @@ data class Item(
         var description: String? = null,
         var volume: String? = null,
         var category_id: Int = 0,
+        var image: String? = null,
         var category: Category? = null,
         var traits: List<Trait>? = null,
         var characteristics: List<Characteristic>? = null,
