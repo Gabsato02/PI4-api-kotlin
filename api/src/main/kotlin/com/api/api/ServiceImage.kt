@@ -11,20 +11,17 @@ import javax.ws.rs.Path
 import javax.ws.rs.PathParam
 import javax.ws.rs.Produces
 import javax.ws.rs.core.MediaType
-import javax.ws.rs.core.Response
-
 
 @Path("/image")
 class ServiceImage {
-
     @Path("/{type}/{id}")
     @GET
-    @Produces("image/jpeg")
+    @Produces("image/png")
     fun list(@PathParam("type") type: String, @PathParam("id") queryId: Int): ByteArray {
         return try {
             val image = DAOImage.list(type, queryId)
             val baos = ByteArrayOutputStream()
-            ImageIO.write(image, "jpg", baos)
+            ImageIO.write(image, "png", baos)
             baos.toByteArray()
         } catch (error: Exception) {
             return byteArrayOf()
