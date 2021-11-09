@@ -31,6 +31,7 @@ class ServiceCategory {
             if (response.id == 0) return returnResponse("not_found", null)
             returnResponse("success", response)
         } catch (error: Exception) {
+            println(error)
             returnResponse("not_found", null)
         }
     }

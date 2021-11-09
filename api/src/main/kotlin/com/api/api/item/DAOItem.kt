@@ -45,7 +45,7 @@ object DAOItem {
     }
 
     fun listItemsByCategory(id: Int): List<Item> {
-        val sql = "SELECT id, name, price, description, volume, category_id, created_at, updated_at, deleted_at FROM item WHERE category_id = $id"
+        val sql = "SELECT id, name, price, description, volume, image, category_id, created_at, updated_at, deleted_at FROM item WHERE category_id = $id"
         val itemsByCategoryList = arrayListOf<Item>()
 
         DB.connection.use {

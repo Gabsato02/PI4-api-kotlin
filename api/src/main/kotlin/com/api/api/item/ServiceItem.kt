@@ -18,6 +18,7 @@ class ServiceItem {
             if (response.isEmpty()) return returnResponse("not_found", null)
             returnResponse("success", response)
         } catch (error: Exception) {
+            println(error)
             returnResponse("not_found", null)
         }
     }
