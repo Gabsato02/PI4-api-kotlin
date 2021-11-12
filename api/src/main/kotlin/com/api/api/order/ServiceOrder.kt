@@ -40,13 +40,13 @@ class ServiceOrder {
     @Path("/add-item")
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces("text/plain")
-    fun addCharacteristic(orderItem: OrderItem): Response {
+    @Produces(MediaType.APPLICATION_JSON)
+    fun addItem(orderItem: OrderItem): Response {
         val validation = orderItem.validate()
         if (validation != "OK") return returnResponse("bad_request", validation)
 
         return try {
-            DAOOrder.addItem(orderItem)
+            orderItem.let { DAOOrder.addItem(it) }
             returnResponse("success", null)
         } catch (error: java.lang.Exception) {
             returnResponse("error", null)
