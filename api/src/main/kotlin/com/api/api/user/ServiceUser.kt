@@ -74,7 +74,11 @@ class ServiceUser {
             DAOUser.update(queryId, user)
             returnResponse("success", null)
         } catch (error: Exception) {
-            returnResponse("not_found", null)
+            if (error.message.isNullOrBlank()) {
+                returnResponse("not_found", null)
+            } else {
+                returnResponse("bad_request", error.message)
+            }
         }
     }
 

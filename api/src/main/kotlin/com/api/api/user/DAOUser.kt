@@ -1,12 +1,14 @@
 package com.api.api.user
 
 import com.api.api.DB
-import com.api.api.md5
+
 import java.sql.ResultSet
 import java.text.SimpleDateFormat
 import java.util.*
 
 object DAOUser {
+    private var rowsAffected = 0
+
     fun listAll(querySearch: String?): List<User> {
         val search = if (querySearch.isNullOrBlank()) "" else "WHERE name LIKE '%$querySearch%'"
         val sql = "SELECT * FROM user $search"
@@ -69,10 +71,20 @@ object DAOUser {
     }
 
     fun update(id: Int, user: User)  {
-        val currentData = DAOUser.list(id)
+        val currentData = list(id)
         val name = if (user.name.isNullOrBlank()) currentData.name else user.name
         val email = if (user.email.isNullOrBlank()) currentData.email else user.email
-        val password = if (user.password.isNullOrBlank()) currentData.password else user.password
+        var newPassword = user.newPassword
+        var password = user.password
+        password = if (newPassword.isNullOrBlank() || currentData.id == 0) {
+            currentData.password.toString()
+        } else {
+            if (password == currentData.password) {
+                newPassword
+            } else {
+                throw Exception("Senha atual incorreta.")
+            }
+        }
         val role = if (user.role.isNullOrBlank()) currentData.role else user.role
 
         val sql = "UPDATE user SET name = ?, email = ?, password = ?, role = ? WHERE id = $id"
@@ -85,8 +97,10 @@ object DAOUser {
             preparedStatement.setString(3, password)
             preparedStatement.setString(4, role)
 
-            preparedStatement.execute()
+            rowsAffected = preparedStatement.executeUpdate()
         }
+
+        if (rowsAffected <= 0) throw Exception()
     }
 
     fun restore(id: Int) {
