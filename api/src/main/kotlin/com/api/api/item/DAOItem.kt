@@ -44,6 +44,22 @@ object DAOItem {
         return item
     }
 
+    fun listItemForOrder(id: Int): SanitizedItem {
+        val sql = "SELECT id, name, price FROM item WHERE id = $id "
+        var item = SanitizedItem()
+
+        DB.connection.use {
+            val preparedStatement = it.prepareStatement(sql)
+            val result = preparedStatement.executeQuery()
+            if(result.next()) {
+                item.id = result.getInt("id")
+                item.name = result.getString("name")
+                item.price = result.getInt("price")
+            }
+        }
+        return item
+    }
+
     fun listItemsByCategory(id: Int): List<Item> {
         val sql = "SELECT id, name, price, description, volume, image, category_id, created_at, updated_at, deleted_at FROM item WHERE category_id = $id"
         val itemsByCategoryList = arrayListOf<Item>()

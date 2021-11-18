@@ -26,3 +26,9 @@ data class Item(
         return "OK"
     }
 }
+
+data class SanitizedItem(
+        var id: Int = 0,
+        var name: String? = null,
+        var price: Int = 0,
+)

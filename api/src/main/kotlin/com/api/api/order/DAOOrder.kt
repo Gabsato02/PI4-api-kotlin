@@ -42,7 +42,7 @@ object DAOOrder {
                 orderItem.quantity = result.getInt("quantity")
                 orderItem.order_id = result.getInt("order_id")
                 orderItem.item_id = result.getInt("item_id")
-                orderItem.item = DAOItem.list(orderItem.item_id)
+                orderItem.item = DAOItem.listItemForOrder(orderItem.item_id)
                 orderItem.created_at = result.getString("created_at")
                 orderItem.updated_at = result.getString("updated_at")
                 orderItem.deleted_at = result.getString("deleted_at")
