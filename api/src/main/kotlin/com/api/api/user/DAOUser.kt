@@ -115,7 +115,7 @@ object DAOUser {
     fun login(login: Login): String {
         val sql = "SELECT * FROM user WHERE email = '${login.email}' AND password = '${login.password}'"
         var userLogin = Login()
-        var userRole = ""
+        var userId = ""
 
         DB.connection.use {
             val preparedStatement = it.prepareStatement(sql)
@@ -123,13 +123,13 @@ object DAOUser {
             if(resultSet.next()) {
                 userLogin.email = resultSet.getString("email")
                 userLogin.password = resultSet.getString("password")
-                userRole = resultSet.getString("role")
+                userId = resultSet.getString("id")
             }
         }
         if (userLogin.email.isNullOrBlank() || userLogin.password.isNullOrBlank()) {
             throw Exception()
         } else {
-            return userRole
+            return userId
         }
     }
 
