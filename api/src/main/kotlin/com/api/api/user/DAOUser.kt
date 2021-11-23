@@ -74,8 +74,10 @@ object DAOUser {
         val currentData = list(id)
         val name = if (user.name.isNullOrBlank()) currentData.name else user.name
         val email = if (user.email.isNullOrBlank()) currentData.email else user.email
+        val image = if (user.image.isNullOrBlank()) currentData.image else user.image
         var newPassword = user.newPassword
         var password = user.password
+
         password = if (newPassword.isNullOrBlank() || currentData.id == 0) {
             currentData.password.toString()
         } else {
@@ -87,7 +89,7 @@ object DAOUser {
         }
         val role = if (user.role.isNullOrBlank()) currentData.role else user.role
 
-        val sql = "UPDATE user SET name = ?, email = ?, password = ?, role = ? WHERE id = $id"
+        val sql = "UPDATE user SET name = ?, email = ?, password = ?, role = ?, image = ? WHERE id = $id"
 
         DB.connection.use {
             val preparedStatement = it.prepareStatement(sql)
@@ -96,6 +98,7 @@ object DAOUser {
             preparedStatement.setString(2, email)
             preparedStatement.setString(3, password)
             preparedStatement.setString(4, role)
+            preparedStatement.setString(5, image)
 
             rowsAffected = preparedStatement.executeUpdate()
         }
